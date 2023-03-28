@@ -1,0 +1,28 @@
+{
+    "manifest_version": 2,
+    "name": "AWS SSO Switcher",
+    "version": "0.1.0",
+    "description": "Easily switch between roles available in the AWS Single-Sign-On Portal",
+    "icons": {
+        "48": "icons/aws-sso-switcher-48.png",
+        "96": "icons/aws-sso-switcher-96.png"
+    },
+    "browser_action": {
+        "default_icon": "icons/aws-sso-switcher-48.png",
+        "default_title": "AWS SSO Switcher",
+        "default_popup": "popup/popup.html"
+    },
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+K",
+                "mac": "MacCtrl+K"
+            },
+            "description": "Open the AWS SSO Profiles Selector popup"
+        }
+    },
+    "permissions": [
+        "activeTab",
+        "storage"
+    ]
+}

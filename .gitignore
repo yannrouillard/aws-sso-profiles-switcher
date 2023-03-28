@@ -1,0 +1,18 @@
+.DS_Store
+node_modules
+README.html
+*.xpi
+*.sw*
+.vimrc
+.env
+addon.env
+
+src/web-ext-artifacts/*
+web-ext-artifacts
+
+# JetBrains IDE files
+.idea
+
+# IstanbulJS
+.nyc_output
+coverage

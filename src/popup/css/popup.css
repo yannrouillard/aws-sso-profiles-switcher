@@ -1,0 +1,233 @@
+[data-theme="light"],
+:root {
+  --text-color-primary: #15141a;  
+  --panel-bg-color: #fff;
+  --panel-separator-color: rgba(240, 240, 244, 1);
+  --item-bg-hover-color: #e0e0e6;
+  --button-bg-color-secondary: #f0f0f4;
+  --button-bg-hover-color-secondary: #e0e0e6;
+  --input-bg-color: #fff;
+  --input-border-color: #8f8f9d;
+  --input-border-focus-color: #0060df;
+  --filter-svg-focus-color: invert(23%) sepia(86%) saturate(952%) hue-rotate(194deg) brightness(133%) contrast(100%);
+}
+
+[data-theme="dark"] {
+  --text-color-primary: #fbfbfe;
+  --panel-bg-color: #42414d;
+  --panel-separator-color: rgba(82, 82, 94, 1);
+  --item-bg-hover-color: #52525e;
+  --button-bg-color-secondary: #2b2a33;
+  --button-bg-hover-color-secondary: #52525e;
+  --input-bg-color: #2b2a33;
+  --input-border-color: #8f8f9d;
+  --input-border-focus-color: #0df;
+  --filter-svg-color: invert(85%) sepia(13%) saturate(76%) hue-rotate(227deg) brightness(102%) contrast(109%);
+  --filter-svg-focus-color: invert(79%) sepia(6%) saturate(3632%) hue-rotate(157deg) brightness(95%) contrast(109%);
+}
+
+/* General Rules and Resets */
+
+* {
+  font-size: inherit;
+  margin-block-end: 0;
+  margin-block-start: 0;
+  margin-inline-end: 0;
+  margin-inline-start: 0;
+  padding-block-end: 0;
+  padding-block-start: 0;
+  padding-inline-end: 0;
+  padding-inline-start: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--panel-bg-color);
+  color: var(--text-color-primary);
+  font-family: sans-serif;
+  font-size: 13px;
+  inline-size: 350px;
+  letter-spacing: -0.125px;
+  max-block-size: 650px;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+}
+
+h1 {
+  block-size: 48px;
+  color: var(--text-color-primary);
+  font-size: 14px;
+  font-weight: bold;
+  inline-size: 100%;
+  letter-spacing: -0.1px;
+  line-height: 48px;
+  text-align: center;
+}
+
+h2 {
+  block-size: 24px;
+  line-height: 24px;
+  margin-block-start: 12px;
+  margin-block-end: 4px;
+  padding-inline: 14px;
+}
+
+hr {
+  border: 0;
+  border-block-start: 1px solid var(--panel-separator-color);
+  display: block;
+}
+
+.hide {
+  display: none !important;
+}
+
+.scrollable {
+  flex: 1;
+  block-size: 100%;
+  overscroll-behavior: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  max-block-size: 601px;
+}
+
+.panel-section {
+  margin-block: 14px;
+  padding-inline: 14px;
+}
+
+.panel-section-after-header {
+  margin-block-end: 14px;
+  padding-inline: 10px;
+}
+
+div#profiles-list {
+  max-block-size: 360px;
+  padding-block-end: 10px;
+  padding-block-start: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-dot {
+  min-width: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 8px;
+}
+
+.profile-item {
+  align-items: center;
+  block-size: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  inline-size: 100%;
+  line-height: 28px;
+}
+
+.profile-item:hover {
+  background-color: var(--item-bg-hover-color);
+}
+
+.profile-text {
+  color: var(--text-color-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex-grow: 100;
+}
+
+.profile-favorite {
+  order: -1;
+}
+
+.profile-favorite-icon {
+  background-image: url("chrome://browser/skin/bookmark-hollow.svg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  display: inline-block;
+  block-size: 100%;
+  width: 20px;
+  margin: 5px;
+  filter: var(--filter-svg-color);
+}
+
+.profile-favorite > .profile-favorite-icon {
+  background-image: url("chrome://browser/skin/bookmark.svg");
+  filter: var(--filter-svg-focus-color);
+}
+
+.instructions {
+  margin-block-start: 18px;
+  text-align: justify;
+  font-size: smaller;
+  padding-left: 8px;
+  padding-right: 8px;
+  line-height: 150%;
+}
+
+.instructions ol {
+  margin-block-start: 8px;
+  margin-block-end: 8px;
+}
+
+.instructions li {
+  list-style-position: inside;
+}
+
+.button {
+  block-size: 32px;
+  border-radius: 4px;
+  color: var(--text-color-primary);
+  background-color: var(--button-bg-color-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  inset-block-end: 0;
+  line-height: 32px;
+  margin-block-start: 8px;
+  margin-inline: 8px;
+  padding-inline: 8px;
+  pointer-events: all;
+  text-align: center;
+  transition: background-color 0.1s ease-in-out;
+}
+
+.button:hover {
+  background-color: var(--button-bg-hover-color-secondary);
+}
+
+input {
+  border: solid 1px var(--input-border-color);
+  border-radius: 4px;
+}
+
+input[type="text"] {
+  inline-size: calc(100% - 28px);
+  border-radius: 4px;
+  background-color: var(--input-bg-color);
+  color: var(--text-color-primary);
+  padding-block: 10px;
+  padding-inline: 8px;
+  margin-inline-start: 14px;
+  margin-inline-end: 14px;
+}
+
+input[type="text"]:focus {
+  border: solid 1px var(--input-border-focus-color);
+  box-shadow: 0 0 0 1px var(--input-border-focus-color);
+  outline: none;
+}
+
+.searchbar input {
+  inline-size: 100%;
+}
