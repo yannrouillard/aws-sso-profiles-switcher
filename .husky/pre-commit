@@ -3,3 +3,5 @@
 
 npx lint-staged
 npm test
+npx addons-linter src/
+
