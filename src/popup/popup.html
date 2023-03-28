@@ -1,54 +1,51 @@
 <!DOCTYPE html>
 
 <html data-theme="auto">
-
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Multi-Account Containers</title>
-    <link rel="stylesheet" href="./css/popup.css">
-</head>
+    <link rel="stylesheet" href="./css/popup.css" />
+  </head>
 
-
-<body>
+  <body>
     <div class="panel">
-        <h1>AWS SSO Profiles Switcher</h1>
+      <h1>AWS SSO Profiles Switcher</h1>
 
-        <div id="no-profile-info-section">
-            <hr>
-            <div class="panel-section">
-                <div style="font-size: larger; text-align: center;">No AWS SSO Profiles loaded yet!</div>
-                <div class="instructions">
-                    To load the list of available AWS Single-Sign-On profiles, follow these steps:
-                    <ol>
-                        <li>Visit your favorite AWS Access Portal</li>
-                        <li>Re-open this menu by clicking on the extension icon</li>
-                        <li>Click on the "Load Profiles" button that appears</li>
-                    </ol>
-                    The list of available AWS profiles will now be loaded and displayed in this menu.
-                </div>
-            </div>
+      <div id="no-profile-info-section">
+        <hr />
+        <div class="panel-section">
+          <div style="font-size: larger; text-align: center">No AWS SSO Profiles loaded yet!</div>
+          <div class="instructions">
+            To load the list of available AWS Single-Sign-On profiles, follow these steps:
+            <ol>
+              <li>Visit your favorite AWS Access Portal</li>
+              <li>Re-open this menu by clicking on the extension icon</li>
+              <li>Click on the "Load Profiles" button that appears</li>
+            </ol>
+            The list of available AWS profiles will now be loaded and displayed in this menu.
+          </div>
         </div>
+      </div>
 
-        <div class="hide" id="aws-access-portal-section">
-            <hr>
-            <div class="panel-section">
-                <div style=" font-size: larger; text-align: center;">AWS Access Portal page detected!</div>
-                <div class="button" id="load-profiles">Click to Load Profiles</div>
-            </div>
-            <hr>
+      <div class="hide" id="aws-access-portal-section">
+        <hr />
+        <div class="panel-section">
+          <div style="font-size: larger; text-align: center">AWS Access Portal page detected!</div>
+          <div class="button" id="load-profiles">Click to Load Profiles</div>
         </div>
+        <hr />
+      </div>
 
-        <div class="hide" id="profiles-section">
-            <hr>
-            <h2>Profiles</h2>
-            <input type="text" id="searchbox" placeholder="Search profiles">
-            <div class="panel-section-after-header scrollable">
-                <div id="profiles-list"></div>
-            </div>
+      <div class="hide" id="profiles-section">
+        <hr />
+        <h2>Profiles</h2>
+        <input type="text" id="searchbox" placeholder="Search profiles" />
+        <div class="panel-section-after-header scrollable">
+          <div id="profiles-list"></div>
         </div>
+      </div>
     </div>
 
     <script src="popup.js"></script>
-</body>
-
+  </body>
 </html>

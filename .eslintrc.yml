@@ -1,0 +1,17 @@
+env:
+  browser: true
+  commonjs: true
+  es2021: true
+  jest/globals: true
+extends:
+  - eslint:recommended
+  - prettier
+overrides: []
+globals:
+  browser: true
+  __dirname: true
+parserOptions:
+  ecmaVersion: latest
+rules: {}
+plugins:
+  - jest

@@ -19,7 +19,7 @@ const TEST_FILES_FOLDER = path.join(__dirname, "test_files");
  * Test Helper functions
  *******************************************************************************/
 
-const createFakeAwsPortalPage = async (htmlFile, { url, browserStorage }) => {
+const createFakeAwsPortalPage = async (htmlFile, { browserStorage }) => {
   // by convention, the second element is the domain name
   const domain = htmlFile.split(".")[1];
 

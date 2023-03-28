@@ -1,29 +1,32 @@
 [data-theme="light"],
 :root {
-  --text-color-primary: #15141a;  
+  --text-color-primary: #15141a;
   --panel-bg-color: #fff;
-  --panel-separator-color: rgba(240, 240, 244, 1);
+  --panel-separator-color: rgb(240 240 244 / 100%);
   --item-bg-hover-color: #e0e0e6;
   --button-bg-color-secondary: #f0f0f4;
   --button-bg-hover-color-secondary: #e0e0e6;
   --input-bg-color: #fff;
   --input-border-color: #8f8f9d;
   --input-border-focus-color: #0060df;
-  --filter-svg-focus-color: invert(23%) sepia(86%) saturate(952%) hue-rotate(194deg) brightness(133%) contrast(100%);
+  --filter-svg-focus-color: invert(23%) sepia(86%) saturate(952%) hue-rotate(194deg)
+    brightness(133%) contrast(100%);
 }
 
 [data-theme="dark"] {
   --text-color-primary: #fbfbfe;
   --panel-bg-color: #42414d;
-  --panel-separator-color: rgba(82, 82, 94, 1);
+  --panel-separator-color: rgb(82 82 94 / 100%);
   --item-bg-hover-color: #52525e;
   --button-bg-color-secondary: #2b2a33;
   --button-bg-hover-color-secondary: #52525e;
   --input-bg-color: #2b2a33;
   --input-border-color: #8f8f9d;
   --input-border-focus-color: #0df;
-  --filter-svg-color: invert(85%) sepia(13%) saturate(76%) hue-rotate(227deg) brightness(102%) contrast(109%);
-  --filter-svg-focus-color: invert(79%) sepia(6%) saturate(3632%) hue-rotate(157deg) brightness(95%) contrast(109%);
+  --filter-svg-color: invert(85%) sepia(13%) saturate(76%) hue-rotate(227deg) brightness(102%)
+    contrast(109%);
+  --filter-svg-focus-color: invert(79%) sepia(6%) saturate(3632%) hue-rotate(157deg) brightness(95%)
+    contrast(109%);
 }
 
 /* General Rules and Resets */

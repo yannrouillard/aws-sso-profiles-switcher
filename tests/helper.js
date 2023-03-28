@@ -58,12 +58,16 @@ const mockBrowserStorage = (storage = {}) => {
     get: async (keys) => {
       if (keys === undefined || keys === null) return storageContent;
       if (typeof keys === "string") {
-        return storageContent.hasOwnProperty(keys) ? { [keys]: storageContent[keys] } : {};
+        return Object.prototype.hasOwnProperty.call(storageContent, keys)
+          ? { [keys]: storageContent[keys] }
+          : {};
       }
       if (typeof keys === "object") {
         const result = {};
         Object.keys(keys).forEach((key) => {
-          result[key] = storageContent.hasOwnProperty(key) ? storageContent[key] : keys[key];
+          result[key] = Object.prototype.hasOwnProperty.call(storageContent, key)
+            ? storageContent[key]
+            : keys[key];
         });
         return result;
       }

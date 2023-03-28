@@ -1,9 +1,25 @@
 {
-  "dependencies": {
-    "jest": "^29.5.0",
-    "jsdom": "^21.1.1"
-  },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install",
+    "lint": "npm run lint:css && npm run lint:js && npm run lint:manifest && npm run lint:github",
+    "lint:css": "stylelint src/**/*.css",
+    "lint:js": "eslint .",
+    "lint:html": "prettier --check **/*.html",
+    "lint:manifest": "ajv --validate-formats=false -s schemas/chrome-manifest.json -d src/manifest.json",
+    "lint:github": "ajv --validate-formats=false --strict=false -s schemas/github-workflow.json -d .github/workflows/pull_requests.yaml"
+  },
+  "devDependencies": {
+    "ajv-cli": "^5.0.0",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "jsdom": "^21.1.1",
+    "lint-staged": "^13.2.0",
+    "prettier": "^2.8.7",
+    "stylelint": "^15.3.0",
+    "stylelint-config-standard": "^31.0.0"
   }
 }

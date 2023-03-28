@@ -43,7 +43,7 @@ async function loadAwsProfiles() {
 }
 
 async function saveAwsProfile(awsProfile) {
-  storageContent = await browser.storage.local.get("awsProfilesByDomain");
+  const storageContent = await browser.storage.local.get("awsProfilesByDomain");
   const awsDomainProfiles = storageContent.awsProfilesByDomain[awsProfile.portalDomain];
   const awsAccountProfiles = awsDomainProfiles.awsProfilesByAccount[awsProfile.accountName];
   awsAccountProfiles.awsProfilesByName[awsProfile.name] = awsProfile;

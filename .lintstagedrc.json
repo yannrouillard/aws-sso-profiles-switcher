@@ -1,0 +1,18 @@
+{
+  "*.js": [
+    "prettier --write",
+    "eslint --fix"
+  ],
+  "*.html": [
+    "prettier --write"
+  ],
+  "*.css": [
+    "prettier --write"
+  ],
+  "manifest.json": [
+    "ajv --validate-formats=false -s schemas/chrome-manifest.json -d "
+  ],
+  ".github/workflows/*.yaml": [
+    "ajv --validate-formats=false --strict=false -s schemas/github-workflow.json -d "
+  ]
+}

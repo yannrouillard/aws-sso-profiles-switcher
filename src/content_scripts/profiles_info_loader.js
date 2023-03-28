@@ -3,7 +3,7 @@
  *******************************************************************************/
 
 async function waitFor(ms) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
@@ -41,7 +41,7 @@ function findAwsPortalDomain() {
 }
 
 function extractAwsProfilesFromAccountSection(section) {
-  const accountName = section.querySelector("div.name").textContent;
+  const accountName = section.querySelector("div.name").textContent.trim();
   const portalDomain = findAwsPortalDomain();
   const awsProfiles = findAwsProfileLinks(section).map((link) => {
     const name = link.getAttribute("title");

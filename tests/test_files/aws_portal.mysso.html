@@ -1,317 +1,512 @@
 <!DOCTYPE html>
-<html class=" iofsymto idc0_346">
+<html class="iofsymto idc0_346">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Amazon Web Services (AWS)</title>
 
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Amazon Web Services (AWS)</title>
+    <link
+      rel="shortcut icon"
+      href="https://d250zetdqyq0c4.cloudfront.net/assets/Prod/eu-west-1/ed86f3ce2099e7eda577503cc3e2881d/favicon.png"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="region" content="eu-west-1" />
+    <meta name="stage" content="Prod" />
+    <meta name="version" content="1" />
+  </head>
 
-  <link rel="shortcut icon"
-    href="https://d250zetdqyq0c4.cloudfront.net/assets/Prod/eu-west-1/ed86f3ce2099e7eda577503cc3e2881d/favicon.png">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="region" content="eu-west-1">
-  <meta name="stage" content="Prod">
-  <meta name="version" content="1">
-</head>
-
-<body data-new-gr-c-s-check-loaded="8.905.0" data-gr-ext-installed="">
-  <app _nghost-c0="" ng-version="4.3.3"><router-outlet _ngcontent-c0=""></router-outlet><portal-ui _nghost-c1="">
-      <div _ngcontent-c1="" class="app-wrapper">
-        <div _ngcontent-c1="" class="content-wrapper">
-          <portal-topbar _ngcontent-c1="" _nghost-c2=""><centered-content _ngcontent-c2="" class="container"
-              _nghost-c5="">
-              <a _ngcontent-c2="" class="title" routerlink="/" href="#/">
-                <img _ngcontent-c2="">
-              </a>
-              <div _ngcontent-c2="" class="service-links">
-                <span _ngcontent-c2="" class="user-display-name">Yann</span>
-                <div _ngcontent-c2="" class="divider"></div>
-
-                <a _ngcontent-c2="" class="my-devices" href="https://mysso.awsapps.com/start#/devices">
-                  MFA devices
+  <body data-new-gr-c-s-check-loaded="8.905.0" data-gr-ext-installed="">
+    <app _nghost-c0="" ng-version="4.3.3"
+      ><router-outlet _ngcontent-c0=""></router-outlet
+      ><portal-ui _nghost-c1="">
+        <div _ngcontent-c1="" class="app-wrapper">
+          <div _ngcontent-c1="" class="content-wrapper">
+            <portal-topbar _ngcontent-c1="" _nghost-c2=""
+              ><centered-content _ngcontent-c2="" class="container" _nghost-c5="">
+                <a _ngcontent-c2="" class="title" routerlink="/" href="#/">
+                  <img _ngcontent-c2="" />
                 </a>
+                <div _ngcontent-c2="" class="service-links">
+                  <span _ngcontent-c2="" class="user-display-name">Yann</span>
+                  <div _ngcontent-c2="" class="divider"></div>
 
-                <div _ngcontent-c2="" class="divider"></div>
-                <a _ngcontent-c2="" routerlink="/signout" href="#/signout">Sign out</a>
+                  <a
+                    _ngcontent-c2=""
+                    class="my-devices"
+                    href="https://mysso.awsapps.com/start#/devices"
+                  >
+                    MFA devices
+                  </a>
 
-              </div>
+                  <div _ngcontent-c2="" class="divider"></div>
+                  <a _ngcontent-c2="" routerlink="/signout" href="#/signout">Sign out</a>
+                </div>
+              </centered-content>
+            </portal-topbar>
+            <sso-alert-list _ngcontent-c1="" _nghost-c3=""></sso-alert-list>
+            <div _ngcontent-c1="" class="container">
+              <div _ngcontent-c1="" class="topbar-spacer"></div>
+              <ie11-banner _ngcontent-c1="" _nghost-c4=""> </ie11-banner>
+              <centered-content _ngcontent-c1="" _nghost-c5="">
+                <router-outlet _ngcontent-c1=""></router-outlet
+                ><portal-dashboard _nghost-c9="" class="ng-tns-c9-0">
+                  <div _ngcontent-c9="" class="ng-tns-c9-0">
+                    <error-notifications
+                      _ngcontent-c9=""
+                      _nghost-c10=""
+                      class="ng-tns-c10-1 ng-tns-c9-0 ng-trigger ng-trigger-flyInOut"
+                      style="opacity: 1; transform: translateX(0px)"
+                    >
+                    </error-notifications>
+                    <sso-search _ngcontent-c9="" _nghost-c11="" class="ng-tns-c11-2 ng-tns-c9-0"
+                      ><input
+                        _ngcontent-c11=""
+                        class="selectable ng-pristine ng-valid ng-touched"
+                        placeholder="Search"
+                      />
+                    </sso-search>
+                    <portal-application-list
+                      _ngcontent-c9=""
+                      _nghost-c12=""
+                      class="ng-tns-c9-0 ng-trigger ng-trigger-fadeIn"
+                      style="opacity: 1"
+                    >
+                      <portal-application
+                        _ngcontent-c12=""
+                        _nghost-c14=""
+                        class="selected"
+                        title="AWS Account"
+                        id="app-03e8643328913682"
+                      >
+                        <div
+                          _ngcontent-c14=""
+                          class="logo"
+                          style="
+                            background-image: url('https://static.global.sso.amazonaws.com/app-03e8643328913682/icons/default.png');
+                          "
+                        ></div>
+                        <div _ngcontent-c14="" class="title" title="AWS Account">
+                          AWS Account (13)
+                        </div>
+                      </portal-application>
 
-            </centered-content>
-          </portal-topbar>
-          <sso-alert-list _ngcontent-c1="" _nghost-c3=""></sso-alert-list>
-          <div _ngcontent-c1="" class="container">
-            <div _ngcontent-c1="" class="topbar-spacer"></div>
-            <ie11-banner _ngcontent-c1="" _nghost-c4="">
-            </ie11-banner>
-            <centered-content _ngcontent-c1="" _nghost-c5="">
+                      <div _ngcontent-c12="" class="empty-application"></div>
+                      <sso-expander
+                        _ngcontent-c12=""
+                        _nghost-c15=""
+                        class="ng-tns-c15-3 ng-trigger ng-trigger-expand"
+                        style="opacity: 1"
+                      >
+                        <portal-instance-list
+                          _ngcontent-c12=""
+                          expander-body=""
+                          _nghost-c16=""
+                          class="ng-tns-c16-4"
+                        >
+                          <div _ngcontent-c16="" class="ng-tns-c16-4">
+                            <portal-instance
+                              _ngcontent-c16=""
+                              class="ng-tns-c16-4 ng-tns-c17-5 ng-trigger ng-trigger-fadeIn ng-animate-queued"
+                              _nghost-c17=""
+                              id="ins-a123bc45e678d901"
+                              style="opacity: 1"
+                            >
+                              <div _ngcontent-c17="" class="portal-instance-section">
+                                <div _ngcontent-c17="" class="instance-section">
+                                  <div _ngcontent-c17="" class="instance-block">
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="instance-icon-block"
+                                      id="instance-icon-block"
+                                    >
+                                      <img
+                                        _ngcontent-c17=""
+                                        class="instance-icon"
+                                        src="Amazon%20Web%20Services%20(AWS)_files/default.png"
+                                      />
+                                    </div>
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="name"
+                                      style="color: rgb(34, 34, 34)"
+                                    >
+                                      Development
+                                    </div>
 
-              <router-outlet _ngcontent-c1=""></router-outlet><portal-dashboard _nghost-c9="" class="ng-tns-c9-0">
-                <div _ngcontent-c9="" class="ng-tns-c9-0">
-
-                  <error-notifications _ngcontent-c9="" _nghost-c10=""
-                    class="ng-tns-c10-1 ng-tns-c9-0 ng-trigger ng-trigger-flyInOut"
-                    style="opacity: 1; transform: translateX(0px);">
-                  </error-notifications>
-                  <sso-search _ngcontent-c9="" _nghost-c11="" class="ng-tns-c11-2 ng-tns-c9-0"><input _ngcontent-c11=""
-                      class="selectable ng-pristine ng-valid ng-touched" placeholder="Search">
-                  </sso-search>
-                  <portal-application-list _ngcontent-c9="" _nghost-c12=""
-                    class="ng-tns-c9-0 ng-trigger ng-trigger-fadeIn" style="opacity: 1;">
-
-
-                    <portal-application _ngcontent-c12="" _nghost-c14="" class="selected" title="AWS Account"
-                      id="app-03e8643328913682">
-                      <div _ngcontent-c14="" class="logo"
-                        style="background-image: url(&quot;https://static.global.sso.amazonaws.com/app-03e8643328913682/icons/default.png&quot;);">
-                      </div>
-                      <div _ngcontent-c14="" class="title" title="AWS Account">
-                        AWS Account
-                        (13)
-                      </div>
-                    </portal-application>
-
-                    <div _ngcontent-c12="" class="empty-application"></div>
-                    <sso-expander _ngcontent-c12="" _nghost-c15="" class="ng-tns-c15-3 ng-trigger ng-trigger-expand"
-                      style="opacity: 1;">
-                      <portal-instance-list _ngcontent-c12="" expander-body="" _nghost-c16="" class="ng-tns-c16-4">
-
-                        <div _ngcontent-c16="" class="ng-tns-c16-4">
-                          <portal-instance _ngcontent-c16=""
-                            class="ng-tns-c16-4 ng-tns-c17-5 ng-trigger ng-trigger-fadeIn ng-animate-queued"
-                            _nghost-c17="" id="ins-a123bc45e678d901" style="opacity: 1;">
-                            <div _ngcontent-c17="" class="portal-instance-section">
-                              <div _ngcontent-c17="" class="instance-section">
-                                <div _ngcontent-c17="" class="instance-block">
-                                  <div _ngcontent-c17="" class="instance-icon-block" id="instance-icon-block">
-                                    <img _ngcontent-c17="" class="instance-icon"
-                                      src="Amazon%20Web%20Services%20(AWS)_files/default.png">
+                                    <p
+                                      _ngcontent-c17=""
+                                      class="metadata ng-tns-c17-5"
+                                      id="instance-metadata"
+                                    >
+                                      <span _ngcontent-c17="" class="accountId">#987654321098</span>
+                                      <span _ngcontent-c17="" class="pipe">|</span>
+                                      <span _ngcontent-c17="" class="email"
+                                        >aws-development@mycompany.com</span
+                                      >
+                                    </p>
                                   </div>
-                                  <div _ngcontent-c17="" class="name" style="color: rgb(34, 34, 34);">Development</div>
-
-                                  <p _ngcontent-c17="" class="metadata ng-tns-c17-5" id="instance-metadata">
-                                    <span _ngcontent-c17="" class="accountId">#987654321098</span>
-                                    <span _ngcontent-c17="" class="pipe">|</span>
-                                    <span _ngcontent-c17="" class="email">aws-development@mycompany.com</span>
-                                  </p>
+                                  <img
+                                    _ngcontent-c17=""
+                                    class="expandIcon ng-tns-c17-5 ng-trigger ng-trigger-rotateClockwise"
+                                    src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
+                                    style="transform: rotate(270deg)"
+                                  />
                                 </div>
-                                <img _ngcontent-c17=""
-                                  class="expandIcon ng-tns-c17-5 ng-trigger ng-trigger-rotateClockwise"
-                                  src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
-                                  style="transform: rotate(270deg);">
-                              </div>
-                              <sso-expander _ngcontent-c17="" _nghost-c15=""
-                                class="ng-tns-c15-18 ng-tns-c17-5 ng-trigger ng-trigger-expand" style="opacity: 1;">
-                                <portal-profile-list _ngcontent-c17="" expander-body="" _nghost-c18=""
-                                  class="ng-tns-c18-19 ng-tns-c17-5">
-                                  <div _ngcontent-c18="" class="list-body ng-tns-c18-19 ng-trigger ng-trigger-expand"
-                                    style="opacity: 1;">
-                                    <portal-profile _ngcontent-c18="" _nghost-c20="" class="ng-tns-c18-19"
-                                      id="p-23a4b5c6789d0e1f">
-                                      <span _ngcontent-c20="">
-                                        <span _ngcontent-c20="" class="desktop-profile">
-                                          <span _ngcontent-c20="" class="profile-name"
-                                            id="profile-name">AdministratorAccess </span>
-                                          <a _ngcontent-c20="" class="profile-link" rel="noopener noreferrer"
+                                <sso-expander
+                                  _ngcontent-c17=""
+                                  _nghost-c15=""
+                                  class="ng-tns-c15-18 ng-tns-c17-5 ng-trigger ng-trigger-expand"
+                                  style="opacity: 1"
+                                >
+                                  <portal-profile-list
+                                    _ngcontent-c17=""
+                                    expander-body=""
+                                    _nghost-c18=""
+                                    class="ng-tns-c18-19 ng-tns-c17-5"
+                                  >
+                                    <div
+                                      _ngcontent-c18=""
+                                      class="list-body ng-tns-c18-19 ng-trigger ng-trigger-expand"
+                                      style="opacity: 1"
+                                    >
+                                      <portal-profile
+                                        _ngcontent-c18=""
+                                        _nghost-c20=""
+                                        class="ng-tns-c18-19"
+                                        id="p-23a4b5c6789d0e1f"
+                                      >
+                                        <span _ngcontent-c20="">
+                                          <span _ngcontent-c20="" class="desktop-profile">
+                                            <span
+                                              _ngcontent-c20=""
+                                              class="profile-name"
+                                              id="profile-name"
+                                              >AdministratorAccess
+                                            </span>
+                                            <a
+                                              _ngcontent-c20=""
+                                              class="profile-link"
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              href="https://mysso.awsapps.com/start/#/saml/custom/987654321098%20%28Development%29/OTg3NjU0MzIxMDk4X2lucy1hMTIzYmM0NWU2NzhkOTAxX3AtMjNhNGI1YzY3ODlkMGUxZg%3D%3D"
+                                              title="AdministratorAccess"
+                                              >Management console</a
+                                            >
+                                            <span _ngcontent-c20="" class="creds-link">
+                                              <a _ngcontent-c20="" id="temp-credentials-button"
+                                                >Command line or programmatic access</a
+                                              >
+                                            </span>
+                                          </span>
+
+                                          <a
+                                            _ngcontent-c20=""
+                                            class="mobile-profile-link"
+                                            rel="noopener noreferrer"
                                             target="_blank"
                                             href="https://mysso.awsapps.com/start/#/saml/custom/987654321098%20%28Development%29/OTg3NjU0MzIxMDk4X2lucy1hMTIzYmM0NWU2NzhkOTAxX3AtMjNhNGI1YzY3ODlkMGUxZg%3D%3D"
-                                            title="AdministratorAccess">Management console</a>
-                                          <span _ngcontent-c20="" class="creds-link">
-                                            <a _ngcontent-c20="" id="temp-credentials-button">Command line or
-                                              programmatic access</a>
-                                          </span>
+                                            title="AdministratorAccess"
+                                            >AdministratorAccess</a
+                                          >
                                         </span>
-
-                                        <a _ngcontent-c20="" class="mobile-profile-link" rel="noopener noreferrer"
-                                          target="_blank"
-                                          href="https://mysso.awsapps.com/start/#/saml/custom/987654321098%20%28Development%29/OTg3NjU0MzIxMDk4X2lucy1hMTIzYmM0NWU2NzhkOTAxX3AtMjNhNGI1YzY3ODlkMGUxZg%3D%3D"
-                                          title="AdministratorAccess">AdministratorAccess</a>
-                                      </span>
-
-                                    </portal-profile>
-                                  </div>
-
-                                </portal-profile-list></sso-expander>
-                            </div>
-                          </portal-instance>
-                        </div>
-                        <div _ngcontent-c16="" class="ng-tns-c16-4">
-                          <portal-instance _ngcontent-c16=""
-                            class="ng-tns-c16-4 ng-tns-c17-6 ng-trigger ng-trigger-fadeIn ng-animate-queued"
-                            _nghost-c17="" id="ins-c246df89e012ab35" style="opacity: 1;">
-                            <div _ngcontent-c17="" class="portal-instance-section">
-                              <div _ngcontent-c17="" class="instance-section">
-                                <div _ngcontent-c17="" class="instance-block">
-                                  <div _ngcontent-c17="" class="instance-icon-block" id="instance-icon-block">
-                                    <img _ngcontent-c17="" class="instance-icon"
-                                      src="Amazon%20Web%20Services%20(AWS)_files/default.png">
-                                  </div>
-                                  <div _ngcontent-c17="" class="name" style="color: rgb(34, 34, 34);">Production</div>
-
-                                  <p _ngcontent-c17="" class="metadata ng-tns-c17-6" id="instance-metadata">
-                                    <span _ngcontent-c17="" class="accountId">#123456789012</span>
-                                    <span _ngcontent-c17="" class="pipe">|</span>
-                                    <span _ngcontent-c17="" class="email">aws-production@mycompany.com</span>
-                                  </p>
-                                </div>
-                                <img _ngcontent-c17=""
-                                  class="expandIcon ng-tns-c17-6 ng-trigger ng-trigger-rotateClockwise"
-                                  src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
-                                  style="transform: rotate(270deg);">
+                                      </portal-profile>
+                                    </div>
+                                  </portal-profile-list></sso-expander
+                                >
                               </div>
-                              <sso-expander _ngcontent-c17="" _nghost-c15=""
-                                class="ng-tns-c15-20 ng-tns-c17-6 ng-trigger ng-trigger-expand" style="opacity: 1;">
-                                <portal-profile-list _ngcontent-c17="" expander-body="" _nghost-c18=""
-                                  class="ng-tns-c18-21 ng-tns-c17-6">
-                                  <div _ngcontent-c18="" class="list-body ng-tns-c18-21 ng-trigger ng-trigger-expand"
-                                    style="opacity: 1;">
-                                    <portal-profile _ngcontent-c18="" _nghost-c20="" class="ng-tns-c18-21"
-                                      id="p-9876a2b3940c5d6e"><span _ngcontent-c20="">
-                                        <span _ngcontent-c20="" class="desktop-profile">
-                                          <span _ngcontent-c20="" class="profile-name"
-                                            id="profile-name">AdministratorAccess </span>
-                                          <a _ngcontent-c20="" class="profile-link" rel="noopener noreferrer"
+                            </portal-instance>
+                          </div>
+                          <div _ngcontent-c16="" class="ng-tns-c16-4">
+                            <portal-instance
+                              _ngcontent-c16=""
+                              class="ng-tns-c16-4 ng-tns-c17-6 ng-trigger ng-trigger-fadeIn ng-animate-queued"
+                              _nghost-c17=""
+                              id="ins-c246df89e012ab35"
+                              style="opacity: 1"
+                            >
+                              <div _ngcontent-c17="" class="portal-instance-section">
+                                <div _ngcontent-c17="" class="instance-section">
+                                  <div _ngcontent-c17="" class="instance-block">
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="instance-icon-block"
+                                      id="instance-icon-block"
+                                    >
+                                      <img
+                                        _ngcontent-c17=""
+                                        class="instance-icon"
+                                        src="Amazon%20Web%20Services%20(AWS)_files/default.png"
+                                      />
+                                    </div>
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="name"
+                                      style="color: rgb(34, 34, 34)"
+                                    >
+                                      Production
+                                    </div>
+
+                                    <p
+                                      _ngcontent-c17=""
+                                      class="metadata ng-tns-c17-6"
+                                      id="instance-metadata"
+                                    >
+                                      <span _ngcontent-c17="" class="accountId">#123456789012</span>
+                                      <span _ngcontent-c17="" class="pipe">|</span>
+                                      <span _ngcontent-c17="" class="email"
+                                        >aws-production@mycompany.com</span
+                                      >
+                                    </p>
+                                  </div>
+                                  <img
+                                    _ngcontent-c17=""
+                                    class="expandIcon ng-tns-c17-6 ng-trigger ng-trigger-rotateClockwise"
+                                    src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
+                                    style="transform: rotate(270deg)"
+                                  />
+                                </div>
+                                <sso-expander
+                                  _ngcontent-c17=""
+                                  _nghost-c15=""
+                                  class="ng-tns-c15-20 ng-tns-c17-6 ng-trigger ng-trigger-expand"
+                                  style="opacity: 1"
+                                >
+                                  <portal-profile-list
+                                    _ngcontent-c17=""
+                                    expander-body=""
+                                    _nghost-c18=""
+                                    class="ng-tns-c18-21 ng-tns-c17-6"
+                                  >
+                                    <div
+                                      _ngcontent-c18=""
+                                      class="list-body ng-tns-c18-21 ng-trigger ng-trigger-expand"
+                                      style="opacity: 1"
+                                    >
+                                      <portal-profile
+                                        _ngcontent-c18=""
+                                        _nghost-c20=""
+                                        class="ng-tns-c18-21"
+                                        id="p-9876a2b3940c5d6e"
+                                        ><span _ngcontent-c20="">
+                                          <span _ngcontent-c20="" class="desktop-profile">
+                                            <span
+                                              _ngcontent-c20=""
+                                              class="profile-name"
+                                              id="profile-name"
+                                              >AdministratorAccess
+                                            </span>
+                                            <a
+                                              _ngcontent-c20=""
+                                              class="profile-link"
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              href="https://mysso.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D"
+                                              title="AdministratorAccess"
+                                              >Management console</a
+                                            >
+                                            <span _ngcontent-c20="" class="creds-link">
+                                              <a _ngcontent-c20="" id="temp-credentials-button"
+                                                >Command line or programmatic access</a
+                                              >
+                                            </span>
+                                          </span>
+
+                                          <a
+                                            _ngcontent-c20=""
+                                            class="mobile-profile-link"
+                                            rel="noopener noreferrer"
                                             target="_blank"
                                             href="https://mysso.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D"
-                                            title="AdministratorAccess">Management console</a>
-                                          <span _ngcontent-c20="" class="creds-link">
-                                            <a _ngcontent-c20="" id="temp-credentials-button">Command line or
-                                              programmatic access</a>
-                                          </span>
+                                            title="AdministratorAccess"
+                                            >AdministratorAccess</a
+                                          >
                                         </span>
-
-                                        <a _ngcontent-c20="" class="mobile-profile-link" rel="noopener noreferrer"
-                                          target="_blank"
-                                          href="https://mysso.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D"
-                                          title="AdministratorAccess">AdministratorAccess</a>
-                                      </span>
-
-                                    </portal-profile>
-                                  </div>
-                                </portal-profile-list>
-                              </sso-expander>
-                            </div>
-                          </portal-instance>
-                        </div>
-                        <div _ngcontent-c16="" class="ng-tns-c16-4">
-                          <portal-instance _ngcontent-c16=""
-                            class="ng-tns-c16-4 ng-tns-c17-7 ng-trigger ng-trigger-fadeIn ng-animate-queued"
-                            _nghost-c17="" id="ins-d135ac57e246b803" style="opacity: 1;">
-                            <div _ngcontent-c17="" class="portal-instance-section">
-                              <div _ngcontent-c17="" class="instance-section">
-                                <div _ngcontent-c17="" class="instance-block">
-                                  <div _ngcontent-c17="" class="instance-icon-block" id="instance-icon-block">
-                                    <img _ngcontent-c17="" class="instance-icon"
-                                      src="Amazon%20Web%20Services%20(AWS)_files/default.png">
-                                  </div>
-                                  <div _ngcontent-c17="" class="name" style="color: rgb(34, 34, 34);">Root</div>
-
-                                  <p _ngcontent-c17="" class="metadata ng-tns-c17-7" id="instance-metadata">
-                                    <span _ngcontent-c17="" class="accountId">#234567890123</span>
-                                    <span _ngcontent-c17="" class="pipe">|</span>
-                                    <span _ngcontent-c17="" class="email">aws-root@mycompany.com</span>
-                                  </p>
-                                </div>
-                                <img _ngcontent-c17=""
-                                  class="expandIcon ng-tns-c17-7 ng-trigger ng-trigger-rotateClockwise"
-                                  src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
-                                  style="transform: rotate(270deg);">
+                                      </portal-profile>
+                                    </div>
+                                  </portal-profile-list>
+                                </sso-expander>
                               </div>
-                              <sso-expander _ngcontent-c17="" _nghost-c15=""
-                                class="ng-tns-c15-22 ng-tns-c17-7 ng-trigger ng-trigger-expand" style="opacity: 1;">
-                                <portal-profile-list _ngcontent-c17="" expander-body="" _nghost-c18=""
-                                  class="ng-tns-c18-23 ng-tns-c17-7">
+                            </portal-instance>
+                          </div>
+                          <div _ngcontent-c16="" class="ng-tns-c16-4">
+                            <portal-instance
+                              _ngcontent-c16=""
+                              class="ng-tns-c16-4 ng-tns-c17-7 ng-trigger ng-trigger-fadeIn ng-animate-queued"
+                              _nghost-c17=""
+                              id="ins-d135ac57e246b803"
+                              style="opacity: 1"
+                            >
+                              <div _ngcontent-c17="" class="portal-instance-section">
+                                <div _ngcontent-c17="" class="instance-section">
+                                  <div _ngcontent-c17="" class="instance-block">
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="instance-icon-block"
+                                      id="instance-icon-block"
+                                    >
+                                      <img
+                                        _ngcontent-c17=""
+                                        class="instance-icon"
+                                        src="Amazon%20Web%20Services%20(AWS)_files/default.png"
+                                      />
+                                    </div>
+                                    <div
+                                      _ngcontent-c17=""
+                                      class="name"
+                                      style="color: rgb(34, 34, 34)"
+                                    >
+                                      Root
+                                    </div>
 
-                                  <div _ngcontent-c18="" class="list-body ng-tns-c18-23 ng-trigger ng-trigger-expand"
-                                    style="opacity: 1;">
-                                    <portal-profile _ngcontent-c18="" _nghost-c20="" class="ng-tns-c18-23"
-                                      id="p-1029a3b4850c6d7e"><span _ngcontent-c20="">
-                                        <span _ngcontent-c20="" class="desktop-profile">
-                                          <span _ngcontent-c20="" class="profile-name"
-                                            id="profile-name">AdministratorAccess </span>
-                                          <a _ngcontent-c20="" class="profile-link" rel="noopener noreferrer"
+                                    <p
+                                      _ngcontent-c17=""
+                                      class="metadata ng-tns-c17-7"
+                                      id="instance-metadata"
+                                    >
+                                      <span _ngcontent-c17="" class="accountId">#234567890123</span>
+                                      <span _ngcontent-c17="" class="pipe">|</span>
+                                      <span _ngcontent-c17="" class="email"
+                                        >aws-root@mycompany.com</span
+                                      >
+                                    </p>
+                                  </div>
+                                  <img
+                                    _ngcontent-c17=""
+                                    class="expandIcon ng-tns-c17-7 ng-trigger ng-trigger-rotateClockwise"
+                                    src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xMCA2TDguNTkgNy40MSAxMy4xNyAxMmwtNC41OCA0LjU5TDEwIDE4bDYtNnoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"
+                                    style="transform: rotate(270deg)"
+                                  />
+                                </div>
+                                <sso-expander
+                                  _ngcontent-c17=""
+                                  _nghost-c15=""
+                                  class="ng-tns-c15-22 ng-tns-c17-7 ng-trigger ng-trigger-expand"
+                                  style="opacity: 1"
+                                >
+                                  <portal-profile-list
+                                    _ngcontent-c17=""
+                                    expander-body=""
+                                    _nghost-c18=""
+                                    class="ng-tns-c18-23 ng-tns-c17-7"
+                                  >
+                                    <div
+                                      _ngcontent-c18=""
+                                      class="list-body ng-tns-c18-23 ng-trigger ng-trigger-expand"
+                                      style="opacity: 1"
+                                    >
+                                      <portal-profile
+                                        _ngcontent-c18=""
+                                        _nghost-c20=""
+                                        class="ng-tns-c18-23"
+                                        id="p-1029a3b4850c6d7e"
+                                        ><span _ngcontent-c20="">
+                                          <span _ngcontent-c20="" class="desktop-profile">
+                                            <span
+                                              _ngcontent-c20=""
+                                              class="profile-name"
+                                              id="profile-name"
+                                              >AdministratorAccess
+                                            </span>
+                                            <a
+                                              _ngcontent-c20=""
+                                              class="profile-link"
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtMTAyOWEzYjQ4NTBjNmQ3ZQ%3D%3D"
+                                              title="AdministratorAccess"
+                                              >Management console</a
+                                            >
+                                            <span _ngcontent-c20="" class="creds-link">
+                                              <a _ngcontent-c20="" id="temp-credentials-button"
+                                                >Command line or programmatic access</a
+                                              >
+                                            </span>
+                                          </span>
+
+                                          <a
+                                            _ngcontent-c20=""
+                                            class="mobile-profile-link"
+                                            rel="noopener noreferrer"
                                             target="_blank"
                                             href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtMTAyOWEzYjQ4NTBjNmQ3ZQ%3D%3D"
-                                            title="AdministratorAccess">Management console</a>
-                                          <span _ngcontent-c20="" class="creds-link">
-                                            <a _ngcontent-c20="" id="temp-credentials-button">Command line or
-                                              programmatic access</a>
-
-                                          </span>
+                                            title="AdministratorAccess"
+                                            >AdministratorAccess</a
+                                          >
                                         </span>
+                                      </portal-profile>
 
-                                        <a _ngcontent-c20="" class="mobile-profile-link" rel="noopener noreferrer"
-                                          target="_blank"
-                                          href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtMTAyOWEzYjQ4NTBjNmQ3ZQ%3D%3D"
-                                          title="AdministratorAccess">AdministratorAccess</a>
-                                      </span>
-
-                                    </portal-profile>
-
-                                    <portal-profile _ngcontent-c18="" _nghost-c20="" class="ng-tns-c18-23"
-                                      id="p-5a1b2c3d4e5f6g7h"><span _ngcontent-c20="">
-                                        <span _ngcontent-c20="" class="desktop-profile">
-                                          <span _ngcontent-c20="" class="profile-name" id="profile-name">ReadOnlyAccess
+                                      <portal-profile
+                                        _ngcontent-c18=""
+                                        _nghost-c20=""
+                                        class="ng-tns-c18-23"
+                                        id="p-5a1b2c3d4e5f6g7h"
+                                        ><span _ngcontent-c20="">
+                                          <span _ngcontent-c20="" class="desktop-profile">
+                                            <span
+                                              _ngcontent-c20=""
+                                              class="profile-name"
+                                              id="profile-name"
+                                              >ReadOnlyAccess
+                                            </span>
+                                            <a
+                                              _ngcontent-c20=""
+                                              class="profile-link"
+                                              rel="noopener noreferrer"
+                                              target="_blank"
+                                              href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA%3D%3D"
+                                              title="ReadOnlyAccess"
+                                              >Management console</a
+                                            >
+                                            <span _ngcontent-c20="" class="creds-link">
+                                              <a _ngcontent-c20="" id="temp-credentials-button"
+                                                >Command line or programmatic access</a
+                                              >
+                                            </span>
                                           </span>
-                                          <a _ngcontent-c20="" class="profile-link" rel="noopener noreferrer"
+
+                                          <a
+                                            _ngcontent-c20=""
+                                            class="mobile-profile-link"
+                                            rel="noopener noreferrer"
                                             target="_blank"
                                             href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA%3D%3D"
-                                            title="ReadOnlyAccess">Management console</a>
-                                          <span _ngcontent-c20="" class="creds-link">
-                                            <a _ngcontent-c20="" id="temp-credentials-button">Command line or
-                                              programmatic access</a>
-
-                                          </span>
+                                            title="ReadOnlyAccess"
+                                            >ReadOnlyAccess</a
+                                          >
                                         </span>
+                                      </portal-profile>
+                                    </div>
+                                  </portal-profile-list>
+                                </sso-expander>
+                              </div>
+                            </portal-instance>
+                          </div>
 
-                                        <a _ngcontent-c20="" class="mobile-profile-link" rel="noopener noreferrer"
-                                          target="_blank"
-                                          href="https://mysso.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA%3D%3D"
-                                          title="ReadOnlyAccess">ReadOnlyAccess</a>
-                                      </span>
-
-                                    </portal-profile>
-                                  </div>
-
-                                </portal-profile-list>
-                              </sso-expander>
-                            </div>
-                          </portal-instance>
-                        </div>
-
-
-
-
-
-
-
-
-
-
-                        <div _ngcontent-c16="" class="triangle col-1-of-4 "></div>
-                      </portal-instance-list>
-                    </sso-expander>
-
-
-
-                  </portal-application-list>
-                </div>
-              </portal-dashboard>
-
-            </centered-content>
+                          <div _ngcontent-c16="" class="triangle col-1-of-4"></div>
+                        </portal-instance-list>
+                      </sso-expander>
+                    </portal-application-list>
+                  </div>
+                </portal-dashboard>
+              </centered-content>
+            </div>
+            <div _ngcontent-c1="" class="push"></div>
           </div>
-          <div _ngcontent-c1="" class="push"></div>
+          <sso-footer _ngcontent-c1="" class="footer" _nghost-c7=""
+            ><centered-content _ngcontent-c7="" _nghost-c5="">
+              <a
+                _ngcontent-c7=""
+                class="termsOfUse"
+                href="https://aws.amazon.com/service-terms/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Terms of Use
+              </a>
+            </centered-content>
+          </sso-footer>
         </div>
-        <sso-footer _ngcontent-c1="" class="footer" _nghost-c7=""><centered-content _ngcontent-c7="" _nghost-c5="">
-            <a _ngcontent-c7="" class="termsOfUse" href="https://aws.amazon.com/service-terms/"
-              rel="noopener noreferrer" target="_blank">
-              Terms of Use
-            </a>
-
-          </centered-content>
-        </sso-footer>
-      </div>
-    </portal-ui></app>
-
-</body>
-
+      </portal-ui></app
+    >
+  </body>
 </html>
