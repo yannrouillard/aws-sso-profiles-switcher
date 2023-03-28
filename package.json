@@ -2,14 +2,16 @@
   "scripts": {
     "test": "jest",
     "prepare": "husky install",
-    "lint": "npm run lint:css && npm run lint:js && npm run lint:manifest && npm run lint:github",
+    "lint": "npm run lint:css && npm run lint:js && npm run lint:manifest && npm run lint:github && npm run lint:addons",
     "lint:css": "stylelint src/**/*.css",
     "lint:js": "eslint .",
     "lint:html": "prettier --check **/*.html",
     "lint:manifest": "ajv --validate-formats=false -s schemas/chrome-manifest.json -d src/manifest.json",
-    "lint:github": "ajv --validate-formats=false --strict=false -s schemas/github-workflow.json -d .github/workflows/pull_requests.yaml"
+    "lint:github": "ajv --validate-formats=false --strict=false -s schemas/github-workflow.json -d .github/workflows/pull_requests.yaml",
+    "lint:addons": "addons-linter src"
   },
   "devDependencies": {
+    "addons-linter": "^6.0.0",
     "ajv-cli": "^5.0.0",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.8.0",
