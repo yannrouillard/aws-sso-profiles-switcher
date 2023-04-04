@@ -6,7 +6,7 @@
   --item-bg-hover-color: #e0e0e6;
   --button-bg-color-secondary: #f0f0f4;
   --button-bg-hover-color-secondary: #e0e0e6;
-  --input-bg-color: #fff;
+  --button-bg-active-color-secondary: #cfcfd8;
   --input-border-color: #8f8f9d;
   --input-border-focus-color: #0060df;
   --filter-svg-focus-color: invert(23%) sepia(86%) saturate(952%) hue-rotate(194deg)
@@ -20,6 +20,7 @@
   --item-bg-hover-color: #52525e;
   --button-bg-color-secondary: #2b2a33;
   --button-bg-hover-color-secondary: #52525e;
+  --button-bg-active-color-secondary: #5b5b66;
   --input-bg-color: #2b2a33;
   --input-border-color: #8f8f9d;
   --input-border-focus-color: #0df;
@@ -163,6 +164,29 @@ div#profiles-list {
   width: 20px;
   margin: 5px;
   filter: var(--filter-svg-color);
+}
+
+.preferences-icon {
+  background-image: url("chrome://browser/skin/preferences/category-general.svg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  top: 6px;
+  right: 10px;
+  position: absolute;
+  filter: var(--filter-svg-color);
+  border-radius: 4px;
+}
+
+.preferences-icon:hover {
+  background-color: var(--button-bg-hover-color-secondary);
+}
+
+.preferences-icon:active {
+  background-color: var(--button-bg-active-color-secondary);
 }
 
 .profile-favorite > .profile-favorite-icon {

@@ -75,9 +75,10 @@ async function getActiveTabUrl() {
 }
 
 function createProfileClickHandler(profile) {
-  return () => {
-    browser.tabs.create({ url: profile.url });
-    window.close();
+  return async () => {
+    const cookieStoreId = (await browser.storage.local.get("defaultContainer")).defaultContainer;
+    await browser.tabs.create({ url: profile.url, cookieStoreId });
+    await window.close();
   };
 }
 
@@ -163,6 +164,10 @@ function installEventHandlers() {
   document.querySelector("input#searchbox").addEventListener("input", refreshPopupDisplay);
   document.querySelector("input#searchbox").addEventListener("keyup", handleSearchKeyEvent);
   document.querySelector("div#load-profiles").addEventListener("click", loadProfilesFromPortalPage);
+  document.querySelector("#preferences-icon").addEventListener("click", async () => {
+    await browser.runtime.openOptionsPage();
+    await window.close();
+  });
 }
 
 /*******************************************************************************
