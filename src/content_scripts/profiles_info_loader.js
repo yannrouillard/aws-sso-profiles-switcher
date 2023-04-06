@@ -47,22 +47,10 @@ function extractAwsProfilesFromAccountSection(section) {
     const name = link.getAttribute("title");
     const url = link.getAttribute("href");
     const title = `${accountName} - ${name}`;
-    return { portalDomain, accountName, name, url, title };
+    const id = `${portalDomain} - ${title}`;
+    return { portalDomain, accountName, name, url, title, id };
   });
   return awsProfiles;
-}
-
-async function mergeWithExistingAwsProfileSettings(portalDomain, awsProfiles) {
-  const storageContent = await browser.storage.local.get({ awsProfilesByDomain: {} });
-  const currentAwsDomainProfiles = storageContent.awsProfilesByDomain[portalDomain] || {};
-  const currentAwsProfilesByAccount = currentAwsDomainProfiles.awsProfilesByAccount || {};
-
-  return awsProfiles.map((profile) => {
-    const currentAccountAwsProfiles = currentAwsProfilesByAccount[profile.accountName] || {};
-    const currentAwsAccountProfilesByName = currentAccountAwsProfiles.awsProfilesByName || {};
-    const currentAwsProfile = currentAwsAccountProfilesByName[profile.name] || {};
-    return Object.assign({}, currentAwsProfile, profile);
-  });
 }
 
 /*******************************************************************************
@@ -82,19 +70,13 @@ function extractAwsProfilesFromAllAccountSections(awsAccountSections) {
 }
 
 async function saveAwsProfiles(awsProfiles) {
-  const portalDomain = findAwsPortalDomain();
+  const currentStorage = await browser.storage.local.get({ awsProfiles: {} });
 
-  const mergedAwsProfiles = await mergeWithExistingAwsProfileSettings(portalDomain, awsProfiles);
-
-  const awsProfilesByAccount = {};
-  mergedAwsProfiles.forEach((profile) => {
-    const accountProfiles = awsProfilesByAccount[profile.accountName] || { awsProfilesByName: {} };
-    accountProfiles.awsProfilesByName[profile.name] = profile;
-    awsProfilesByAccount[profile.accountName] = accountProfiles;
+  awsProfiles.forEach((profile) => {
+    const existingAwsProfile = currentStorage.awsProfiles[profile.id] || {};
+    currentStorage.awsProfiles[profile.id] = Object.assign({}, existingAwsProfile, profile);
   });
 
-  const currentStorage = await browser.storage.local.get({ awsProfilesByDomain: {} });
-  Object.assign(currentStorage.awsProfilesByDomain, { [portalDomain]: { awsProfilesByAccount } });
   await browser.storage.local.set(currentStorage);
 }
 

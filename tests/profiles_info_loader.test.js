@@ -100,9 +100,10 @@ test("Merge profiles from two different AWS Portal pages in storage", async () =
 test("Update profiles fom an existing AWS Portal pages in storage", async () => {
   // Given
   const storageContent = buildStorageContentForDomains("mysso");
+  const awsProfiles = storageContent.awsProfiles;
   // We set one element to be favorite and expect its state to be preserved
-  const awsProfiles = storageContent.awsProfilesByDomain["mysso"].awsProfilesByAccount;
-  awsProfiles.Development.awsProfilesByName.AdministratorAccess.favorite = true;
+  const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
+  favoriteProfile.favorite = true;
   const expectedContent = structuredClone(storageContent);
 
   // We add a new account not present in the portal and expect to be removed on update

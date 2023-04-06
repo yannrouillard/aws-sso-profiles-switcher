@@ -20,8 +20,8 @@ const popupCode = fs.readFileSync(POPUP_SCRIPT, "utf8");
 test("Load and display roles from storage", async () => {
   // Given
   const storageContent = buildStorageContentForDomains("mysso");
-  const awsProfiles = storageContent.awsProfilesByDomain["mysso"].awsProfilesByAccount;
-  awsProfiles.Production.awsProfilesByName.AdministratorAccess.favorite = true;
+  const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
+  favoriteProfile.favorite = true;
 
   const browserStorage = mockBrowserStorage(storageContent);
   const popupPage = await createFakePage(POPUP_HTML_FILE, { browserStorage });
@@ -32,7 +32,7 @@ test("Load and display roles from storage", async () => {
   const profilesDisplayed = Array.from(
     popupPage.window.document.querySelectorAll("div.profile-text")
   ).map((e) => e.textContent);
-  const favoriteProfile = popupPage.window.document.querySelector("div.profile-favorite");
+  const favoriteProfileDiv = popupPage.window.document.querySelector("div.profile-favorite");
 
   expect(profilesDisplayed).toEqual([
     "Development - AdministratorAccess",
@@ -40,7 +40,7 @@ test("Load and display roles from storage", async () => {
     "Root - AdministratorAccess",
     "Root - ReadOnlyAccess",
   ]);
-  expect(favoriteProfile.textContent).toMatch("Production - AdministratorAccess");
+  expect(favoriteProfileDiv.textContent).toMatch(favoriteProfile.title);
 });
 
 test("Display instructions when no profiles exist", async () => {
