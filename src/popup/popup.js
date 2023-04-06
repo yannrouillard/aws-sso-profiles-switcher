@@ -29,25 +29,18 @@ function getNiceColor(index) {
 }
 
 async function loadAwsProfiles() {
-  const storageContent = await browser.storage.local.get("awsProfilesByDomain");
-  if (!storageContent.awsProfilesByDomain) {
+  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
+  if (!storageContent.awsProfiles) {
     return [];
   }
-  const awsProfiles = Object.values(storageContent.awsProfilesByDomain)
-    .map((awsAccountProfiles) => Object.values(awsAccountProfiles.awsProfilesByAccount))
-    .flat()
-    .map((awsProfilesByAccount) => Object.values(awsProfilesByAccount.awsProfilesByName))
-    .flat();
-
-  return awsProfiles;
+  return Object.values(storageContent.awsProfiles).sort();
 }
 
 async function saveAwsProfile(awsProfile) {
-  const storageContent = await browser.storage.local.get("awsProfilesByDomain");
-  const awsDomainProfiles = storageContent.awsProfilesByDomain[awsProfile.portalDomain];
-  const awsAccountProfiles = awsDomainProfiles.awsProfilesByAccount[awsProfile.accountName];
-  awsAccountProfiles.awsProfilesByName[awsProfile.name] = awsProfile;
-  await browser.storage.local.set({ awsProfilesByDomain: storageContent.awsProfilesByDomain });
+  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
+  const existingAwsProfile = storageContent.awsProfiles[awsProfile.id] || {};
+  storageContent.awsProfiles[awsProfile.id] = Object.assign({}, existingAwsProfile, awsProfile);
+  await browser.storage.local.set(storageContent);
 }
 
 function getColorThemePreference() {
