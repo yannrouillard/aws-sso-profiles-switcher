@@ -6,6 +6,7 @@ const buildStorageContentForDomains = (...domains) => {
     const profiles = [
       {
         accountName: "Development",
+        accountId: "987654321098",
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Development - AdministratorAccess",
@@ -14,6 +15,7 @@ const buildStorageContentForDomains = (...domains) => {
       },
       {
         accountName: "Production",
+        accountId: "123456789012",
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Production - AdministratorAccess",
@@ -22,6 +24,7 @@ const buildStorageContentForDomains = (...domains) => {
       },
       {
         accountName: "Root",
+        accountId: "234567890123",
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Root - AdministratorAccess",
@@ -30,6 +33,7 @@ const buildStorageContentForDomains = (...domains) => {
       },
       {
         accountName: "Root",
+        accountId: "234567890123",
         name: "ReadOnlyAccess",
         portalDomain: domain,
         title: "Root - ReadOnlyAccess",
