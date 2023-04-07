@@ -42,13 +42,14 @@ function findAwsPortalDomain() {
 
 function extractAwsProfilesFromAccountSection(section) {
   const accountName = section.querySelector("div.name").textContent.trim();
+  const accountId = section.querySelector("span.accountId").textContent.trim().replace("#", "");
   const portalDomain = findAwsPortalDomain();
   const awsProfiles = findAwsProfileLinks(section).map((link) => {
     const name = link.getAttribute("title");
     const url = link.getAttribute("href");
     const title = `${accountName} - ${name}`;
     const id = `${portalDomain} - ${title}`;
-    return { portalDomain, accountName, name, url, title, id };
+    return { portalDomain, accountName, accountId, name, url, title, id };
   });
   return awsProfiles;
 }
