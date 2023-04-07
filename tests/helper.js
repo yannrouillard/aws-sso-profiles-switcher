@@ -49,6 +49,51 @@ const buildStorageContentForDomains = (...domains) => {
   return storageContent;
 };
 
+const createFakeBrowser = (browserStorage, tabUrl) => {
+  let registeredListener = null;
+
+  return {
+    permissions: {
+      contains: async () => true,
+    },
+    storage: {
+      local: browserStorage || mockBrowserStorage(),
+      onChanged: {
+        removeListener: () => {},
+      },
+    },
+    tabs: {
+      query: async () => {
+        return [{ url: tabUrl }];
+      },
+    },
+    runtime: {
+      onMessage: {
+        addListener: () => {},
+      },
+    },
+    webRequest: {
+      onBeforeRequest: {
+        addListener: (listener) => {
+          registeredListener = listener;
+        },
+        getListener: () => {
+          return registeredListener;
+        },
+        hasListener: (listener) => {
+          return registeredListener === listener;
+        },
+        waitForListener: async () => {
+          while (!registeredListener) {
+            await new Promise((r) => setTimeout(r, 50));
+          }
+          return registeredListener;
+        },
+      },
+    },
+  };
+};
+
 const mockBrowserStorage = (storage = {}) => {
   const storageContent = structuredClone(storage);
 
@@ -90,25 +135,13 @@ const createFakePage = async (
     return { matches: true };
   };
 
-  window.browser = {
-    storage: {
-      local: browserStorage || mockBrowserStorage(),
-      onChanged: {
-        removeListener: () => {},
-      },
-    },
-    tabs: {
-      query: async () => {
-        return [{ url: tabUrl }];
-      },
-    },
-  };
-
+  window.browser = createFakeBrowser(browserStorage, tabUrl);
   return window;
 };
 
 module.exports = {
   createFakePage,
+  createFakeBrowser,
   buildStorageContentForDomains,
   mockBrowserStorage,
 };
