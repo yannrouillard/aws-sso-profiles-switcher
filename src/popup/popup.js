@@ -28,12 +28,30 @@ function getNiceColor(index) {
   return niceColors[index % niceColors.length];
 }
 
+async function legacyLoadAwsProfiles() {
+  const storageContent = await browser.storage.local.get({ awsProfilesByDomain: {} });
+
+  const awsProfiles = Object.values(storageContent.awsProfilesByDomain)
+    .map((awsAccountProfiles) => Object.values(awsAccountProfiles.awsProfilesByAccount))
+    .flat()
+    .map((awsProfilesByAccount) => Object.values(awsProfilesByAccount.awsProfilesByName))
+    .flat()
+    .map((profile) => Object.assign(profile, { id: `${profile.portalDomain} - ${profile.title}` }));
+
+  return awsProfiles;
+}
+
 async function loadAwsProfiles() {
-  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  if (!storageContent.awsProfiles) {
-    return [];
+  const legacyAwsProfiles = await legacyLoadAwsProfiles();
+  if (legacyAwsProfiles.length > 0) {
+    for (const profile of legacyAwsProfiles) {
+      await saveAwsProfile(profile);
+    }
+    await browser.storage.local.remove("awsProfilesByDomain");
   }
-  return Object.values(storageContent.awsProfiles).sort();
+  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
+  const awsProfiles = Object.values(storageContent.awsProfiles).sort();
+  return awsProfiles;
 }
 
 async function saveAwsProfile(awsProfile) {
