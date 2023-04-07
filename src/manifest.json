@@ -25,8 +25,19 @@
         "activeTab",
         "contextualIdentities",
         "cookies",
-        "storage"
+        "storage",
+        "webRequest"
     ],
+    "optional_permissions": [
+        "https://*.amazonaws.com/federation/console*",
+        "https://*.awsapps.com/start/*"
+    ],
+    "background": {
+        "scripts": [
+            "background_scripts/background.js"
+        ],
+        "persistent": true
+    },
     "options_ui": {
         "page": "options/options.html",
         "browser_style": true
