@@ -34,6 +34,7 @@
     ],
     "background": {
         "scripts": [
+            "lib/common.js",
             "background_scripts/background.js"
         ],
         "persistent": true

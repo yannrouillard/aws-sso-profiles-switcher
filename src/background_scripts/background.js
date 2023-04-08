@@ -24,16 +24,9 @@ function extractProfileInfoFromRequest(requestDetails) {
   return profileInfo;
 }
 
-async function saveAwsProfile(awsProfile) {
-  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const existingAwsProfile = storageContent.awsProfiles[awsProfile.id] || {};
-  storageContent.awsProfiles[awsProfile.id] = Object.assign({}, existingAwsProfile, awsProfile);
-  await browser.storage.local.set(storageContent);
-}
-
-function signInfoRequestListener(requestDetails) {
+async function signInfoRequestListener(requestDetails) {
   const awsProfile = extractProfileInfoFromRequest(requestDetails);
-  saveAwsProfile(awsProfile);
+  await saveAwsProfile(awsProfile);
   return {};
 }
 

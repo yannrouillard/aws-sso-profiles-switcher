@@ -28,39 +28,6 @@ function getNiceColor(index) {
   return niceColors[index % niceColors.length];
 }
 
-async function legacyLoadAwsProfiles() {
-  const storageContent = await browser.storage.local.get({ awsProfilesByDomain: {} });
-
-  const awsProfiles = Object.values(storageContent.awsProfilesByDomain)
-    .map((awsAccountProfiles) => Object.values(awsAccountProfiles.awsProfilesByAccount))
-    .flat()
-    .map((awsProfilesByAccount) => Object.values(awsProfilesByAccount.awsProfilesByName))
-    .flat()
-    .map((profile) => Object.assign(profile, { id: `${profile.portalDomain} - ${profile.title}` }));
-
-  return awsProfiles;
-}
-
-async function loadAwsProfiles() {
-  const legacyAwsProfiles = await legacyLoadAwsProfiles();
-  if (legacyAwsProfiles.length > 0) {
-    for (const profile of legacyAwsProfiles) {
-      await saveAwsProfile(profile);
-    }
-    await browser.storage.local.remove("awsProfilesByDomain");
-  }
-  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const awsProfiles = Object.values(storageContent.awsProfiles).sort();
-  return awsProfiles;
-}
-
-async function saveAwsProfile(awsProfile) {
-  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const existingAwsProfile = storageContent.awsProfiles[awsProfile.id] || {};
-  storageContent.awsProfiles[awsProfile.id] = Object.assign({}, existingAwsProfile, awsProfile);
-  await browser.storage.local.set(storageContent);
-}
-
 function getColorThemePreference() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
@@ -130,6 +97,7 @@ function createTableEntryFromAwsProfile(awsProfile, index) {
 
 async function loadProfilesFromPortalPage() {
   browser.storage.onChanged.addListener(refreshPopupDisplay);
+  await browser.tabs.executeScript({ file: "/lib/common.js" });
   await browser.tabs.executeScript({ file: "/content_scripts/profiles_info_loader.js" });
 }
 
