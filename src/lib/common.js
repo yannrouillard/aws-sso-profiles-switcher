@@ -1,18 +1,38 @@
+const availableProfileColors = [
+  "blue",
+  "turquoise",
+  "green",
+  "yellow",
+  "orange",
+  "red",
+  "pink",
+  "purple",
+];
+
+const getNextProfileColor = (index) => {
+  return availableProfileColors[index % availableProfileColors.length];
+};
+
+function updateStoredProfile(storedProfiles, newProfile) {
+  const existingProfile = storedProfiles[newProfile.id] || {};
+  // We assign a default color if one doesn't exist yet
+  const color = getNextProfileColor(Object.keys(storedProfiles).length);
+  storedProfiles[newProfile.id] = Object.assign({ color }, existingProfile, newProfile);
+  return storedProfiles[newProfile.id];
+}
+
 async function saveAwsProfile(awsProfile) {
   const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const existingAwsProfile = storageContent.awsProfiles[awsProfile.id] || {};
-  storageContent.awsProfiles[awsProfile.id] = Object.assign({}, existingAwsProfile, awsProfile);
+  const profile = updateStoredProfile(storageContent.awsProfiles, awsProfile);
   await browser.storage.local.set(storageContent);
+  return profile;
 }
 
 async function saveAwsProfiles(awsProfiles) {
   const currentStorage = await browser.storage.local.get({ awsProfiles: {} });
-
-  awsProfiles.forEach((profile) => {
-    const existingAwsProfile = currentStorage.awsProfiles[profile.id] || {};
-    currentStorage.awsProfiles[profile.id] = Object.assign({}, existingAwsProfile, profile);
-  });
-
+  for (const profile of Object.values(awsProfiles).sort()) {
+    await updateStoredProfile(currentStorage.awsProfiles, profile);
+  }
   await browser.storage.local.set(currentStorage);
 }
 
@@ -24,7 +44,12 @@ async function legacyLoadAwsProfiles() {
     .flat()
     .map((awsProfilesByAccount) => Object.values(awsProfilesByAccount.awsProfilesByName))
     .flat()
-    .map((profile) => Object.assign(profile, { id: `${profile.portalDomain} - ${profile.title}` }));
+    .map((profile, index) =>
+      Object.assign(profile, {
+        id: `${profile.portalDomain} - ${profile.title}`,
+        color: getNextProfileColor(index),
+      })
+    );
 
   return awsProfiles;
 }
