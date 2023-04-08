@@ -15,12 +15,14 @@ const waitForCondition = async (condition, timeout = 1000) => {
 };
 
 const buildStorageContentForDomains = (...domains) => {
+  const colors = ["blue", "turquoise", "green", "yellow", "orange", "red", "pink", "purple"];
   const storageContent = { awsProfiles: {} };
-  domains.forEach((domain) => {
+  domains.forEach((domain, index) => {
     const profiles = [
       {
         accountName: "Development",
         accountId: "987654321098",
+        color: colors[4 * index],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Development - AdministratorAccess",
@@ -30,6 +32,7 @@ const buildStorageContentForDomains = (...domains) => {
       {
         accountName: "Production",
         accountId: "123456789012",
+        color: colors[4 * index + 1],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Production - AdministratorAccess",
@@ -39,6 +42,7 @@ const buildStorageContentForDomains = (...domains) => {
       {
         accountName: "Root",
         accountId: "234567890123",
+        color: colors[4 * index + 2],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Root - AdministratorAccess",
@@ -48,6 +52,7 @@ const buildStorageContentForDomains = (...domains) => {
       {
         accountName: "Root",
         accountId: "234567890123",
+        color: colors[4 * index + 3],
         name: "ReadOnlyAccess",
         portalDomain: domain,
         title: "Root - ReadOnlyAccess",

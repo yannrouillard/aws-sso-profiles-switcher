@@ -2,30 +2,19 @@
  * Helper functions
  *******************************************************************************/
 
-function getNiceColor(index) {
-  const niceColors = [
-    "#ea5545",
-    "#f46a9b",
-    "#ef9b20",
-    "#edbf33",
-    "#ede15b",
-    "#bdcf32",
-    "#87bc45",
-    "#27aeef",
-    "#b33dc6",
-    "#964b00",
-    "#8b008b",
-    "#1e90ff",
-    "#ffd700",
-    "#228b22",
-    "#00ffff",
-    "#ff69b4",
-    "#ffa07a",
-    "#8fbc8f",
-    "#483d8b",
-    "#00bfff",
-  ];
-  return niceColors[index % niceColors.length];
+const HTML_COLOR_CODE = {
+  blue: "#37adff",
+  turquoise: "#00c79a",
+  green: "#51cd00",
+  yellow: "#ffcb00",
+  orange: "#ff9f00",
+  red: "#ff613d",
+  pink: "#ff4bda",
+  purple: "#af51f5",
+};
+
+function getHtmlColorCode(colorName) {
+  return HTML_COLOR_CODE[colorName];
 }
 
 function getColorThemePreference() {
@@ -79,10 +68,10 @@ function createElement(tagName, { classes = [], attributes = {}, text }) {
   return element;
 }
 
-function createTableEntryFromAwsProfile(awsProfile, index) {
+function createTableEntryFromAwsProfile(awsProfile) {
   const entry = createElement("div", { classes: ["profile-item"] });
   if (awsProfile.favorite) entry.classList.add("profile-favorite");
-  const dotStyle = `background-color: ${getNiceColor(index)}`;
+  const dotStyle = `background-color: ${getHtmlColorCode(awsProfile.color)}`;
   entry.append(
     createElement("div", { classes: ["profile-dot"], attributes: { style: dotStyle } }),
     createElement("div", { classes: ["profile-text"], text: awsProfile.title }),

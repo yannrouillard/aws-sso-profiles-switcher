@@ -51,7 +51,7 @@ test("Load and display roles from storage", async () => {
     "Root - AdministratorAccess",
     "Root - ReadOnlyAccess",
   ]);
-  expect(favoriteProfileDiv.textContent).toMatch(favoriteProfile.title);
+  expect(favoriteProfileDiv.textContent).toEqual(favoriteProfile.title);
 });
 
 test("Display instructions when no profiles exist", async () => {

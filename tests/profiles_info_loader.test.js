@@ -82,14 +82,14 @@ test.each(testFiles)("Parse correctly AWS Portal page with $case", async ({ html
   await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
   // Then
   const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
-  expect(browserStorageContent).toMatchObject(buildStorageContentForDomains("mysso"));
+  expect(browserStorageContent).toEqual(buildStorageContentForDomains("mysso"));
 });
 
 test("Merge profiles from two different AWS Portal pages in storage", async () => {
   // Given
   const browserStorage = mockBrowserStorage();
   const awsPortalPages = await Promise.all(
-    ["anothersso", "mysso"].map((domain) =>
+    ["mysso", "anothersso"].map((domain) =>
       createFakeAwsPortalPage(`aws_portal.${domain}.html`, { browserStorage })
     )
   );
@@ -100,7 +100,7 @@ test("Merge profiles from two different AWS Portal pages in storage", async () =
   // Then
   const browserStorageContent = await browserStorage.get();
   const expectedContent = buildStorageContentForDomains("mysso", "anothersso");
-  expect(browserStorageContent).toMatchObject(expectedContent);
+  expect(browserStorageContent).toEqual(expectedContent);
 });
 
 test("Update profiles fom an existing AWS Portal pages in storage", async () => {
@@ -123,5 +123,5 @@ test("Update profiles fom an existing AWS Portal pages in storage", async () => 
   await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
   // Then
   const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
-  expect(browserStorageContent).toMatchObject(expectedContent);
+  expect(browserStorageContent).toEqual(expectedContent);
 });
