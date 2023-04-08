@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 
 const { mockBrowserStorage, buildStorageContentForDomains, createFakePage } = require("./helper");
@@ -8,25 +7,35 @@ const { mockBrowserStorage, buildStorageContentForDomains, createFakePage } = re
  *******************************************************************************/
 
 const SRC_FOLDER = path.join(__dirname, "..", "src");
-const PROFILE_INFO_LOADER_SCRIPT = path.join(
-  SRC_FOLDER,
-  "content_scripts",
-  "profiles_info_loader.js"
-);
 const TEST_FILES_FOLDER = path.join(__dirname, "test_files");
+const PROFILES_INFO_LOADER_SCRIPTS = [
+  `file://${path.join(SRC_FOLDER, "lib/common.js")}`,
+  `file://${path.join(SRC_FOLDER, "content_scripts/profiles_info_loader.js")}`,
+];
 
 /*******************************************************************************
  * Test Helper functions
  *******************************************************************************/
 
-const createFakeAwsPortalPage = async (htmlFile, { browserStorage }) => {
+const createFakeAwsPortalPage = async (htmlFile, { browserStorage } = {}) => {
   // by convention, the second element is the domain name
   const domain = htmlFile.split(".")[1];
 
-  return createFakePage(path.join(TEST_FILES_FOLDER, htmlFile), {
+  const page = await createFakePage(path.join(TEST_FILES_FOLDER, htmlFile), {
     url: `https://${domain}.awsapps.com/start/#`,
     browserStorage,
   });
+
+  page.injectScriptsAndWaitForStorageUpdate = async (scripts) => {
+    const beforeValue = await page.window.browser.storage.local.get({ awsProfiles: {} });
+    const browserStorageChanged = async () => {
+      const afterValue = await page.window.browser.storage.local.get({ awsProfiles: {} });
+      return JSON.stringify(beforeValue) != JSON.stringify(afterValue);
+    };
+    await page.injectScripts(scripts, { waitCondition: browserStorageChanged });
+  };
+
+  return page;
 };
 
 const simulateExpandSection = (event) => {
@@ -51,8 +60,6 @@ const simulateExpandSection = (event) => {
  * Tests definition
  *******************************************************************************/
 
-const profilesInfoLoaderCode = fs.readFileSync(PROFILE_INFO_LOADER_SCRIPT, "utf8");
-
 const testFiles = [
   {
     htmlFile: "aws_portal.mysso.expanded_sections.html",
@@ -66,16 +73,15 @@ const testFiles = [
 
 test.each(testFiles)("Parse correctly AWS Portal page with $case", async ({ htmlFile }) => {
   // Given
-  const browserStorage = mockBrowserStorage();
-  const awsPortalPage = await createFakeAwsPortalPage(htmlFile, { browserStorage });
+  const awsPortalPage = await createFakeAwsPortalPage(htmlFile);
   // We have to manually simulate section expansion click logic
   awsPortalPage.window.document
     .querySelectorAll("div.instance-section, div.logo")
     .forEach((elt) => elt.addEventListener("click", simulateExpandSection));
   // When
-  await awsPortalPage.eval(profilesInfoLoaderCode);
+  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
   // Then
-  const browserStorageContent = await browserStorage.get();
+  const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
   expect(browserStorageContent).toMatchObject(buildStorageContentForDomains("mysso"));
 });
 
@@ -89,7 +95,7 @@ test("Merge profiles from two different AWS Portal pages in storage", async () =
   );
   // When
   for (const page of awsPortalPages) {
-    await page.eval(profilesInfoLoaderCode);
+    await page.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
   }
   // Then
   const browserStorageContent = await browserStorage.get();
@@ -111,12 +117,11 @@ test("Update profiles fom an existing AWS Portal pages in storage", async () => 
   delete awsProfiles.Production;
 
   const browserStorage = mockBrowserStorage(storageContent);
-
   const awsPortalPage = await createFakeAwsPortalPage("aws_portal.mysso.html", { browserStorage });
 
   // When
-  await awsPortalPage.eval(profilesInfoLoaderCode);
+  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
   // Then
-  const browserStorageContent = await browserStorage.get();
+  const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
   expect(browserStorageContent).toMatchObject(expectedContent);
 });

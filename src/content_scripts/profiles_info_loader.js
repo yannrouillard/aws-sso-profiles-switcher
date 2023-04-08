@@ -70,17 +70,6 @@ function extractAwsProfilesFromAllAccountSections(awsAccountSections) {
   return awsAccountSections.map(extractAwsProfilesFromAccountSection).flat();
 }
 
-async function saveAwsProfiles(awsProfiles) {
-  const currentStorage = await browser.storage.local.get({ awsProfiles: {} });
-
-  awsProfiles.forEach((profile) => {
-    const existingAwsProfile = currentStorage.awsProfiles[profile.id] || {};
-    currentStorage.awsProfiles[profile.id] = Object.assign({}, existingAwsProfile, profile);
-  });
-
-  await browser.storage.local.set(currentStorage);
-}
-
 /*******************************************************************************
  * Main code
  *******************************************************************************/

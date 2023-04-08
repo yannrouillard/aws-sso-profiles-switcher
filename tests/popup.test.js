@@ -1,32 +1,43 @@
 const path = require("path");
-const fs = require("fs");
 
-const { mockBrowserStorage, buildStorageContentForDomains, createFakePage } = require("./helper");
+const {
+  mockBrowserStorage,
+  buildStorageContentForDomains,
+  createFakePage,
+  waitForCondition,
+} = require("./helper");
 
 /*******************************************************************************
  * Constants
  *******************************************************************************/
 
 const SRC_FOLDER = path.join(__dirname, "..", "src");
-const POPUP_SCRIPT = path.join(SRC_FOLDER, "popup", "popup.js");
 const POPUP_HTML_FILE = path.join(SRC_FOLDER, "popup", "popup.html");
+
+/*******************************************************************************
+ * Test Helper functions
+ *******************************************************************************/
+
+const searchboxFocused = (page) => async () => {
+  return (
+    page.window.document.querySelector("input#searchbox") == page.window.document.activeElement
+  );
+};
 
 /*******************************************************************************
  * Tests definition
  *******************************************************************************/
-
-const popupCode = fs.readFileSync(POPUP_SCRIPT, "utf8");
 
 test("Load and display roles from storage", async () => {
   // Given
   const storageContent = buildStorageContentForDomains("mysso");
   const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
   favoriteProfile.favorite = true;
-
   const browserStorage = mockBrowserStorage(storageContent);
-  const popupPage = await createFakePage(POPUP_HTML_FILE, { browserStorage });
+
   // When
-  await popupPage.eval(popupCode);
+  const popupPage = await createFakePage(POPUP_HTML_FILE, { browserStorage });
+  await waitForCondition(searchboxFocused(popupPage));
 
   // Then
   const profilesDisplayed = Array.from(
@@ -44,10 +55,9 @@ test("Load and display roles from storage", async () => {
 });
 
 test("Display instructions when no profiles exist", async () => {
-  // Given
-  const popupPage = await createFakePage(POPUP_HTML_FILE);
   // When
-  await popupPage.eval(popupCode);
+  const popupPage = await createFakePage(POPUP_HTML_FILE);
+  await waitForCondition(searchboxFocused(popupPage));
   // Then
   const noProfileInfoSection = popupPage.window.document.querySelector(
     "div#no-profile-info-section"
@@ -56,12 +66,11 @@ test("Display instructions when no profiles exist", async () => {
 });
 
 test("Display loading page button on Portal page", async () => {
-  // Given
+  // When
   const popupPage = await createFakePage(POPUP_HTML_FILE, {
     tabUrl: "https://mysso.awsapps.com/start/#",
   });
-  // When
-  await popupPage.eval(popupCode);
+  await waitForCondition(searchboxFocused(popupPage));
   // Then
   const accessPortalSection = popupPage.window.document.querySelector(
     "div#aws-access-portal-section"

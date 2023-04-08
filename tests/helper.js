@@ -1,5 +1,19 @@
 const { JSDOM } = require("jsdom");
 
+const sleep = async (ms) => {
+  await new Promise((r) => setTimeout(r, ms));
+};
+
+const currentTime = () => new Date().getTime();
+
+const waitForCondition = async (condition, timeout = 1000) => {
+  if (!condition) return;
+  const startTime = currentTime();
+  while (!(await condition()) && currentTime() < startTime + timeout) {
+    await sleep(50);
+  }
+};
+
 const buildStorageContentForDomains = (...domains) => {
   const storageContent = { awsProfiles: {} };
   domains.forEach((domain) => {
@@ -84,9 +98,7 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
           return registeredListener === listener;
         },
         waitForListener: async () => {
-          while (!registeredListener) {
-            await new Promise((r) => setTimeout(r, 50));
-          }
+          await waitForCondition(() => registeredListener);
           return registeredListener;
         },
       },
@@ -99,21 +111,21 @@ const mockBrowserStorage = (storage = {}) => {
 
   return {
     get: async (keys) => {
-      if (keys === undefined || keys === null) return storageContent;
-      if (typeof keys === "string") {
-        return Object.prototype.hasOwnProperty.call(storageContent, keys)
+      let result = {};
+      if (keys === undefined || keys === null) {
+        result = storageContent;
+      } else if (typeof keys === "string") {
+        result = Object.prototype.hasOwnProperty.call(storageContent, keys)
           ? { [keys]: storageContent[keys] }
           : {};
-      }
-      if (typeof keys === "object") {
-        const result = {};
+      } else if (typeof keys === "object") {
         Object.keys(keys).forEach((key) => {
           result[key] = Object.prototype.hasOwnProperty.call(storageContent, key)
             ? storageContent[key]
             : keys[key];
         });
-        return result;
       }
+      return structuredClone(result);
     },
     set: async (value) => {
       Object.assign(storageContent, value);
@@ -125,18 +137,33 @@ const createFakePage = async (
   htmlFile,
   { url, browserStorage, tabUrl = "https://fakeurl/" } = {}
 ) => {
-  const { window } = await JSDOM.fromFile(htmlFile, {
+  const dom = await JSDOM.fromFile(htmlFile, {
     runScripts: "dangerously",
     resources: "usable",
+    includeNodeLocations: true,
     url,
   });
 
-  window.matchMedia = () => {
+  dom.window.matchMedia = () => {
     return { matches: true };
   };
 
-  window.browser = createFakeBrowser(browserStorage, tabUrl);
-  return window;
+  dom.injectScripts = async (scripts, { waitCondition, waitTimeout } = {}) => {
+    const scriptLoaders = scripts.map(
+      (script) =>
+        new Promise((resolve) => {
+          const scriptElement = dom.window.document.createElement("script");
+          scriptElement.src = script;
+          scriptElement.onload = resolve;
+          dom.window.document.body.appendChild(scriptElement);
+        })
+    );
+    await Promise.all(scriptLoaders);
+    await waitForCondition(waitCondition, waitTimeout);
+  };
+
+  dom.window.browser = createFakeBrowser(browserStorage, tabUrl);
+  return dom;
 };
 
 module.exports = {
@@ -144,4 +171,5 @@ module.exports = {
   createFakeBrowser,
   buildStorageContentForDomains,
   mockBrowserStorage,
+  waitForCondition,
 };

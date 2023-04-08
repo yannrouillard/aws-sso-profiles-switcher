@@ -10,6 +10,10 @@ overrides: []
 globals:
   browser: true
   __dirname: true
+  # Common
+  loadAwsProfiles: true
+  saveAwsProfile: true
+  saveAwsProfiles: true
 parserOptions:
   ecmaVersion: latest
 rules: {}
