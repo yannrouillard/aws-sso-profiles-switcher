@@ -45,6 +45,21 @@ async function setupOptionsUI() {
     preEnableOption: () => browser.permissions.request(PERMISSIONS),
     postDisableOption: () => setOptionState("openProfileInDedicatedContainer", false),
   });
+
+  await configureOption("openProfileInDedicatedContainer", {
+    confirmOptionEnabled: async () => {
+      return (
+        (await browser.permissions.contains(PERMISSIONS)) &&
+        (await isOptionEnabled("autoPopulateUsedProfiles"))
+      );
+    },
+    preEnableOption: async () => {
+      return (
+        (await browser.permissions.request(PERMISSIONS)) &&
+        (await setOptionState("autoPopulateUsedProfiles", true))
+      );
+    },
+  });
 }
 
 setupOptionsUI();

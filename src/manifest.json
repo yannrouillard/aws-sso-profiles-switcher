@@ -26,7 +26,8 @@
         "contextualIdentities",
         "cookies",
         "storage",
-        "webRequest"
+        "webRequest",
+        "webRequestBlocking"
     ],
     "optional_permissions": [
         "https://*.amazonaws.com/federation/console*",
