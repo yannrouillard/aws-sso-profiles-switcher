@@ -2,26 +2,48 @@ const PERMISSIONS = {
   origins: ["https://*.awsapps.com/start/*", "https://*.amazonaws.com/*/profiles"],
 };
 
-async function setupOptionsUI() {
-  const hasPermissions = await browser.permissions.contains(PERMISSIONS);
+async function isOptionEnabled(option) {
   const storageContent = await browser.storage.local.get({ configuration: {} });
   const configuration = storageContent.configuration;
+  return configuration[option];
+}
 
-  const autoPopulateUsedProfiles = document.querySelector("input#auto-populate-used-profiles");
-  autoPopulateUsedProfiles.checked = configuration.autoPopulateUsedProfiles && hasPermissions;
-  autoPopulateUsedProfiles.addEventListener("change", async () => {
-    if (autoPopulateUsedProfiles.checked) {
-      const granted = await browser.permissions.request(PERMISSIONS);
-      if (granted) {
-        configuration.autoPopulateUsedProfiles = true;
-        await browser.storage.local.set({ configuration });
-        browser.runtime.sendMessage({ command: "reloadBackgroundScript" });
+async function setOptionState(option, value) {
+  const storageContent = await browser.storage.local.get({ configuration: {} });
+  const configuration = storageContent.configuration;
+  configuration[option] = value;
+  await browser.storage.local.set({ configuration });
+  const optionDiv = document.querySelector(`input#${option}`);
+  optionDiv.checked = value;
+  return value;
+}
+
+async function configureOption(
+  option,
+  { confirmOptionEnabled, preEnableOption, postDisableOption }
+) {
+  const optionDiv = document.querySelector(`input#${option}`);
+  optionDiv.checked = (await isOptionEnabled(option)) && (await confirmOptionEnabled());
+  optionDiv.addEventListener("change", async () => {
+    if (optionDiv.checked) {
+      if (await preEnableOption()) {
+        await setOptionState(option, true);
       } else {
-        autoPopulateUsedProfiles.checked = false;
+        optionDiv.checked = false;
       }
     } else {
-      await browser.permissions.remove(PERMISSIONS);
+      await setOptionState(option, false);
+      if (postDisableOption) await postDisableOption();
     }
+    browser.runtime.sendMessage({ command: "reloadBackgroundScript" });
+  });
+}
+
+async function setupOptionsUI() {
+  await configureOption("autoPopulateUsedProfiles", {
+    confirmOptionEnabled: () => browser.permissions.contains(PERMISSIONS),
+    preEnableOption: () => browser.permissions.request(PERMISSIONS),
+    postDisableOption: () => setOptionState("openProfileInDedicatedContainer", false),
   });
 }
 
