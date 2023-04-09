@@ -26,6 +26,13 @@ const listenerConfigured = (page) => async () => {
   return page.window.browser.webRequest.onBeforeRequest.getListener() != null;
 };
 
+const setupBrowserWithBackgroundScripts = async ({ configuration }) => {
+  const browserStorage = mockBrowserStorage({ configuration });
+  const page = await createFakePage(EMPTY_HTML, { browserStorage });
+  await page.injectScripts(BACKGROUND_SCRIPTS, { waitCondition: listenerConfigured(page) });
+  return page.window.browser;
+};
+
 /*******************************************************************************
  * Test Data
  *******************************************************************************/
@@ -58,53 +65,43 @@ const TEST_PROFILE_LOGIN_RESPONSE = JSON.stringify({
 
 test("Auto-populate with an AWS profile used by the user", async () => {
   // Given
-  const browserStorage = mockBrowserStorage({ configuration: { autoPopulateUsedProfiles: true } });
-  const page = await createFakePage(EMPTY_HTML, { browserStorage });
-  await page.injectScripts(BACKGROUND_SCRIPTS, { waitCondition: listenerConfigured(page) });
-
+  const browser = await setupBrowserWithBackgroundScripts({
+    configuration: { autoPopulateUsedProfiles: true },
+  });
   // When
-  await page.window.browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
-
+  await browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
   // Then
-  const storageContent = await page.window.browser.storage.local.get();
+  const storageContent = await browser.storage.local.get();
   expect(storageContent.awsProfiles).toEqual({ [TEST_PROFILE.id]: TEST_PROFILE });
 });
 
 test("Open an AWS profile in a new dedicated container", async () => {
   // Given
-  const browserStorage = mockBrowserStorage({
+  const browser = await setupBrowserWithBackgroundScripts({
     configuration: { autoPopulateUsedProfiles: true, openProfileInDedicatedContainer: true },
   });
-  const page = await createFakePage(EMPTY_HTML, { browserStorage });
-  await page.injectScripts(BACKGROUND_SCRIPTS, { waitCondition: listenerConfigured(page) });
-
   // When
-  await page.window.browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
-  await page.window.browser.webRequest.sendResponseDataToFilter(TEST_PROFILE_LOGIN_RESPONSE);
-
+  await browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
+  await browser.webRequest.sendResponseDataToFilter(TEST_PROFILE_LOGIN_RESPONSE);
   // Then
-  const tab = await page.window.browser.tabs.getCurrent();
+  const tab = await browser.tabs.getCurrent();
   expect(tab.url).toEqual(TEST_PROFILE_SIGNIN_URL);
   expect(tab.cookieStoreId).toEqual("firefox-container-1");
 });
 
 test("Open an AWS profile in an already existing dedicated container", async () => {
   // Given
-  const browserStorage = mockBrowserStorage({
+  const browser = await setupBrowserWithBackgroundScripts({
     configuration: { autoPopulateUsedProfiles: true, openProfileInDedicatedContainer: true },
   });
-  const page = await createFakePage(EMPTY_HTML, { browserStorage });
-  await page.injectScripts(BACKGROUND_SCRIPTS, { waitCondition: listenerConfigured(page) });
-
   // When
-  for (const name of ["fakeContainer1", TEST_PROFILE.title, "fakeContainer2"]) {
-    await page.window.browser.contextualIdentities.create({ name });
+  for (const name of ["fakeContainer1", TEST_PROFILE.title, "fakeContainer3"]) {
+    await browser.contextualIdentities.create({ name });
   }
-  await page.window.browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
-  await page.window.browser.webRequest.sendResponseDataToFilter(TEST_PROFILE_LOGIN_RESPONSE);
-
+  await browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
+  await browser.webRequest.sendResponseDataToFilter(TEST_PROFILE_LOGIN_RESPONSE);
   // Then
-  const tab = await page.window.browser.tabs.getCurrent();
+  const tab = await browser.tabs.getCurrent();
   expect(tab.url).toEqual(TEST_PROFILE_SIGNIN_URL);
   expect(tab.cookieStoreId).toEqual("firefox-container-2");
 });
