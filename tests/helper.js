@@ -1,3 +1,5 @@
+const { TextEncoder, TextDecoder } = require("util");
+
 const { JSDOM } = require("jsdom");
 
 const sleep = async (ms) => {
@@ -69,9 +71,25 @@ const buildStorageContentForDomains = (...domains) => {
 };
 
 const createFakeBrowser = (browserStorage, tabUrl) => {
+  const encoder = new TextEncoder();
+
+  let currentTab = { url: tabUrl };
+  let containers = [];
   let registeredListener = null;
+  let filterResponseDataCallbacks = {};
 
   return {
+    contextualIdentities: {
+      query: (queryFilter) => containers.filter((c) => !queryFilter || c.name == queryFilter.name),
+      create: (containerSpec) => {
+        const newContainer = Object.assign(
+          { cookieStoreId: `firefox-container-${containers.length + 1}` },
+          containerSpec
+        );
+        containers.push(newContainer);
+        return newContainer;
+      },
+    },
     permissions: {
       contains: async () => true,
     },
@@ -82,9 +100,16 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
       },
     },
     tabs: {
-      query: async () => {
-        return [{ url: tabUrl }];
+      create: async ({ url, cookieStoreId }) => {
+        Object.assign(currentTab, { url, cookieStoreId });
       },
+      query: async () => {
+        return [currentTab];
+      },
+      getCurrent: () => {
+        return currentTab;
+      },
+      remove: async () => {},
     },
     runtime: {
       onMessage: {
@@ -92,6 +117,22 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
       },
     },
     webRequest: {
+      sendResponseDataToFilter: async (responseData) => {
+        filterResponseDataCallbacks.ondata({ data: encoder.encode(responseData) });
+        await filterResponseDataCallbacks.onstop();
+      },
+      filterResponseData: () => {
+        return {
+          set ondata(callback) {
+            filterResponseDataCallbacks.ondata = callback;
+          },
+          set onstop(callback) {
+            filterResponseDataCallbacks.onstop = callback;
+          },
+          close: () => {},
+          write: () => {},
+        };
+      },
       onBeforeRequest: {
         addListener: (listener) => {
           registeredListener = listener;
@@ -105,6 +146,9 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
         waitForListener: async () => {
           await waitForCondition(() => registeredListener);
           return registeredListener;
+        },
+        triggerListener: async (requestDetails) => {
+          return await registeredListener(requestDetails);
         },
       },
     },
@@ -166,6 +210,11 @@ const createFakePage = async (
     await Promise.all(scriptLoaders);
     await waitForCondition(waitCondition, waitTimeout);
   };
+
+  // Workaround the issue that jsdom doesn't define these 2 ones
+  // see https://github.com/jsdom/jsdom/issues/2524
+  dom.window.TextDecoder = TextDecoder;
+  dom.window.TextEncoder = TextEncoder;
 
   dom.window.browser = createFakeBrowser(browserStorage, tabUrl);
   return dom;
