@@ -32,16 +32,6 @@ const buildStorageContentForDomains = (...domains) => {
         id: `${domain} - Development - AdministratorAccess`,
       },
       {
-        accountName: "Production",
-        accountId: "123456789012",
-        color: colors[4 * index + 1],
-        name: "AdministratorAccess",
-        portalDomain: domain,
-        title: "Production - AdministratorAccess",
-        url: `https://${domain}.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D`,
-        id: `${domain} - Production - AdministratorAccess`,
-      },
-      {
         accountName: "Root",
         accountId: "234567890123",
         color: colors[4 * index + 2],
@@ -60,6 +50,16 @@ const buildStorageContentForDomains = (...domains) => {
         title: "Root - ReadOnlyAccess",
         url: `https://${domain}.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA%3D%3D`,
         id: `${domain} - Root - ReadOnlyAccess`,
+      },
+      {
+        accountName: "Production",
+        accountId: "123456789012",
+        color: colors[4 * index + 1],
+        name: "AdministratorAccess",
+        portalDomain: domain,
+        title: "Production - AdministratorAccess",
+        url: `https://${domain}.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D`,
+        id: `${domain} - Production - AdministratorAccess`,
       },
     ];
     profiles.forEach((profile) => {
