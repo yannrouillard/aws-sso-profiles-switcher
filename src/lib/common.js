@@ -61,7 +61,9 @@ async function loadAwsProfiles() {
     await browser.storage.local.remove("awsProfilesByDomain");
   }
   const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const awsProfiles = Object.values(storageContent.awsProfiles).sort();
+  const awsProfiles = Object.values(storageContent.awsProfiles).sort((a, b) =>
+    a.title.localeCompare(b.title)
+  );
   return awsProfiles;
 }
 
