@@ -8,6 +8,7 @@
         "96": "icons/aws-sso-switcher-96.png"
     },
     "browser_action": {
+        "default_area": "navbar",
         "default_icon": "icons/aws-sso-switcher-48.png",
         "default_title": "AWS SSO Profiles Switcher",
         "default_popup": "popup/popup.html"
