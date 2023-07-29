@@ -1,3 +1,9 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
 body {
   --grey10: #e7e7e7;
 
