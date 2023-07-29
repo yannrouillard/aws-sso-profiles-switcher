@@ -74,8 +74,13 @@ async function openProfileInContainerRequestListener(requestDetails) {
       const signInInfo = JSON.parse(responseData);
       const url = buildProfileLoginUrl(awsProfile, signInInfo);
       const container = await getOrCreateContainerForProfile(awsProfile);
+      const currentTab = await browser.tabs.get(requestDetails.tabId);
       await Promise.all([
-        browser.tabs.create({ url, cookieStoreId: container.cookieStoreId }),
+        browser.tabs.create({
+          url,
+          cookieStoreId: container.cookieStoreId,
+          index: currentTab.index,
+        }),
         browser.tabs.remove(requestDetails.tabId),
       ]);
     } catch {

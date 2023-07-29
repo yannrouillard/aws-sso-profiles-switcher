@@ -35,16 +35,16 @@ function setPopupSectionVisibility(section, visible) {
   }
 }
 
-async function getActiveTabUrl() {
+async function getActiveTab() {
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-  const activeTabUrl = tabs[0].url;
-  return activeTabUrl;
+  return tabs[0];
 }
 
 function createProfileClickHandler(profile) {
   return async () => {
     const cookieStoreId = (await browser.storage.local.get("defaultContainer")).defaultContainer;
-    await browser.tabs.create({ url: profile.url, cookieStoreId });
+    const activeTab = await getActiveTab();
+    await browser.tabs.create({ url: profile.url, cookieStoreId, index: activeTab.index + 1 });
     await window.close();
   };
 }
@@ -105,10 +105,10 @@ function createSearchTermsMatcher(searchTerms) {
 }
 
 async function refreshPopupDisplay() {
-  const activeTabUrl = await getActiveTabUrl();
+  const activeTab = await getActiveTab();
   const currentProfiles = await loadAwsProfiles();
 
-  const isOnAwsPortal = activeTabUrl.includes(".awsapps.com/");
+  const isOnAwsPortal = activeTab.url.includes(".awsapps.com/");
   const hasProfiles = currentProfiles.length != 0;
 
   if (hasProfiles) {
