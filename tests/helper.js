@@ -73,10 +73,16 @@ const buildStorageContentForDomains = (...domains) => {
 const createFakeBrowser = (browserStorage, tabUrl) => {
   const encoder = new TextEncoder();
 
-  let currentTab = { url: tabUrl };
+  let nextAvailableTabId = 1;
+  let currentTab = { url: tabUrl, id: 0 };
+  let allTabs = [currentTab];
   let containers = [];
   let registeredListener = null;
   let filterResponseDataCallbacks = {};
+
+  const returnTabWithIndex = (tab) => {
+    return Object.assign({ index: allTabs.indexOf(tab) }, tab);
+  };
 
   return {
     contextualIdentities: {
@@ -100,16 +106,25 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
       },
     },
     tabs: {
-      create: async ({ url, cookieStoreId }) => {
-        Object.assign(currentTab, { url, cookieStoreId });
+      get: async (tabId) => {
+        const foundTabs = allTabs.filter((t) => t.id == tabId);
+        return returnTabWithIndex(foundTabs[0]);
+      },
+      create: async ({ url, cookieStoreId, index }) => {
+        index = index || allTabs.length;
+        currentTab = { url, cookieStoreId, id: nextAvailableTabId };
+        nextAvailableTabId += 1;
+        allTabs.splice(index, 0, currentTab);
       },
       query: async () => {
-        return [currentTab];
+        return [returnTabWithIndex(currentTab)];
       },
       getCurrent: () => {
-        return currentTab;
+        return returnTabWithIndex(currentTab);
       },
-      remove: async () => {},
+      remove: async (tabId) => {
+        allTabs = allTabs.filter((t) => t.id !== tabId);
+      },
     },
     runtime: {
       onMessage: {

@@ -80,13 +80,16 @@ test("Open an AWS profile in a new dedicated container", async () => {
   const browser = await setupBrowserWithBackgroundScripts({
     configuration: { autoPopulateUsedProfiles: true, openProfileInDedicatedContainer: true },
   });
+  const activeTabBefore = (await browser.tabs.query({ active: true, currentWindow: true }))[0];
   // When
   await browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
   await browser.webRequest.sendResponseDataToFilter(TEST_PROFILE_LOGIN_RESPONSE);
   // Then
-  const tab = await browser.tabs.getCurrent();
-  expect(tab.url).toEqual(TEST_PROFILE_SIGNIN_URL);
-  expect(tab.cookieStoreId).toEqual("firefox-container-1");
+  const activeTab = (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+  expect(activeTab.url).toEqual(TEST_PROFILE_SIGNIN_URL);
+  expect(activeTab.cookieStoreId).toEqual("firefox-container-1");
+  // The new tab should be placed at the same position
+  expect(activeTab.index).toEqual(activeTabBefore.index);
 });
 
 test("Open an AWS profile in an already existing dedicated container", async () => {
