@@ -1,6 +1,11 @@
 const path = require("path");
 
-const { mockBrowserStorage, buildStorageContentForDomains, createFakePage } = require("./helper");
+const {
+  mockBrowserStorage,
+  buildStorageContentForDomains,
+  createFakePage,
+  waitForCondition,
+} = require("./helper");
 
 /*******************************************************************************
  * Constants
@@ -26,13 +31,19 @@ const createFakeAwsPortalPage = async (htmlFile, { browserStorage } = {}) => {
     browserStorage,
   });
 
-  page.injectScriptsAndWaitForStorageUpdate = async (scripts) => {
-    const beforeValue = await page.window.browser.storage.local.get({ awsProfiles: {} });
-    const browserStorageChanged = async () => {
-      const afterValue = await page.window.browser.storage.local.get({ awsProfiles: {} });
-      return JSON.stringify(beforeValue) != JSON.stringify(afterValue);
+  page.injectScriptsAndWaitForStorageUpdate = async (scripts, expectedProfilesCount) => {
+    await page.injectScripts(scripts);
+    await page.waitForBrowserStorageUpdate(expectedProfilesCount);
+  };
+
+  page.waitForBrowserStorageUpdate = async (expectedProfilesCount) => {
+    const browserStorageHasExpectedProfilesCount = async () => {
+      const storage = await page.window.browser.storage.local.get({ awsProfiles: {} });
+      return (
+        storage.awsProfiles && Object.keys(storage.awsProfiles).length === expectedProfilesCount
+      );
     };
-    await page.injectScripts(scripts, { waitCondition: browserStorageChanged });
+    await waitForCondition(browserStorageHasExpectedProfilesCount);
   };
 
   return page;
@@ -74,15 +85,20 @@ const testFiles = [
 test.each(testFiles)("Parse correctly AWS Portal page with $case", async ({ htmlFile }) => {
   // Given
   const awsPortalPage = await createFakeAwsPortalPage(htmlFile);
+  const expectedStorage = buildStorageContentForDomains("mysso");
+  const expectedProfilesCount = Object.keys(expectedStorage.awsProfiles).length;
   // We have to manually simulate section expansion click logic
   awsPortalPage.window.document
     .querySelectorAll("div.instance-section, div.logo")
     .forEach((elt) => elt.addEventListener("click", simulateExpandSection));
   // When
-  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
+  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
+    PROFILES_INFO_LOADER_SCRIPTS,
+    expectedProfilesCount
+  );
   // Then
   const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
-  expect(browserStorageContent).toEqual(buildStorageContentForDomains("mysso"));
+  expect(browserStorageContent).toEqual(expectedStorage);
 });
 
 test("Merge profiles from two different AWS Portal pages in storage", async () => {
@@ -93,13 +109,17 @@ test("Merge profiles from two different AWS Portal pages in storage", async () =
       createFakeAwsPortalPage(`aws_portal.${domain}.html`, { browserStorage })
     )
   );
+  const expectedContent = buildStorageContentForDomains("mysso", "anothersso");
+  const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
   // When
   for (const page of awsPortalPages) {
-    await page.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
+    await page.injectScriptsAndWaitForStorageUpdate(
+      PROFILES_INFO_LOADER_SCRIPTS,
+      expectedProfilesCount
+    );
   }
   // Then
   const browserStorageContent = await browserStorage.get();
-  const expectedContent = buildStorageContentForDomains("mysso", "anothersso");
   expect(browserStorageContent).toEqual(expectedContent);
 });
 
@@ -111,16 +131,19 @@ test("Update profiles fom an existing AWS Portal pages in storage", async () => 
   const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
   favoriteProfile.favorite = true;
   const expectedContent = structuredClone(storageContent);
+  const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
 
   // We add a new account not present in the portal and expect to be removed on update
-  awsProfiles.ToBeRemoved = awsProfiles.Production;
-  delete awsProfiles.Production;
+  awsProfiles.ToBeRemoved = Object.assign({}, Object.values(awsProfiles)[0], { id: "ToBeRemoved" });
 
   const browserStorage = mockBrowserStorage(storageContent);
   const awsPortalPage = await createFakeAwsPortalPage("aws_portal.mysso.html", { browserStorage });
 
   // When
-  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(PROFILES_INFO_LOADER_SCRIPTS);
+  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
+    PROFILES_INFO_LOADER_SCRIPTS,
+    expectedProfilesCount
+  );
   // Then
   const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
   expect(browserStorageContent).toEqual(expectedContent);

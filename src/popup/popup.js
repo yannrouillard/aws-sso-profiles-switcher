@@ -85,7 +85,6 @@ function createTableEntryFromAwsProfile(awsProfile) {
 }
 
 async function loadProfilesFromPortalPage() {
-  browser.storage.onChanged.addListener(refreshPopupDisplay);
   await browser.tabs.executeScript({ file: "/lib/common.js" });
   await browser.tabs.executeScript({ file: "/content_scripts/profiles_info_loader.js" });
 }
@@ -124,8 +123,6 @@ async function refreshPopupDisplay() {
   setPopupSectionVisibility("aws-access-portal", isOnAwsPortal);
   setPopupSectionVisibility("no-profile-info", !hasProfiles && !isOnAwsPortal);
   setPopupSectionVisibility("profiles", hasProfiles);
-
-  browser.storage.onChanged.removeListener(refreshPopupDisplay);
 }
 
 function installEventHandlers() {
@@ -148,3 +145,5 @@ refreshPopupDisplay().then(() => {
   installEventHandlers();
   document.querySelector("input#searchbox").focus();
 });
+
+browser.storage.onChanged.addListener(refreshPopupDisplay);

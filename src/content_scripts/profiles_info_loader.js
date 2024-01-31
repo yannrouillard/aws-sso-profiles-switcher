@@ -54,26 +54,32 @@ function extractAwsProfilesFromAccountSection(section) {
   return awsProfiles;
 }
 
-/*******************************************************************************
- * Main functions
- *******************************************************************************/
-
-async function findAndExpandAwsAccountSectionFolds(page) {
+async function* findAndExpandAwsAccountSectionFolds(page) {
   const accountsParentSection = findAwsAccountsParentSection(page);
   await expandSection(accountsParentSection);
   const accountSections = findAwsAccountSections(accountsParentSection);
-  await Promise.all(accountSections.map(expandSection));
+  // We open section sequentially with a small delay to avoid triggering
+  // the 429 too many requests error from AWS SSO Portal
+  for (const section of accountSections) {
+    yield expandSection(section);
+    await waitFor(50);
+  }
   return accountSections;
-}
-
-function extractAwsProfilesFromAllAccountSections(awsAccountSections) {
-  return awsAccountSections.map(extractAwsProfilesFromAccountSection).flat();
 }
 
 /*******************************************************************************
  * Main code
  *******************************************************************************/
 
-findAndExpandAwsAccountSectionFolds(document)
-  .then(extractAwsProfilesFromAllAccountSections)
-  .then(saveAwsProfiles);
+(async () => {
+  const profilesRemoved = await removeAwsProfilesForPortalDomain(findAwsPortalDomain());
+  const mergeWithPreviousProfileToKeepSettings = (profile) =>
+    Object.assign({}, profilesRemoved[profile.id] || {}, profile);
+
+  for await (let section of findAndExpandAwsAccountSectionFolds(document)) {
+    const profiles = extractAwsProfilesFromAccountSection(section).map(
+      mergeWithPreviousProfileToKeepSettings
+    );
+    await saveAwsProfiles(profiles);
+  }
+})();

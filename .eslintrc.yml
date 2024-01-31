@@ -14,6 +14,7 @@ globals:
   loadAwsProfiles: true
   saveAwsProfile: true
   saveAwsProfiles: true
+  removeAwsProfilesForPortalDomain: true
 parserOptions:
   ecmaVersion: latest
 rules: {}

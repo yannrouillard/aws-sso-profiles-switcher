@@ -103,6 +103,7 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
       local: browserStorage || mockBrowserStorage(),
       onChanged: {
         removeListener: () => {},
+        addListener: () => {},
       },
     },
     tabs: {
@@ -212,7 +213,7 @@ const createFakePage = async (
     return { matches: true };
   };
 
-  dom.injectScripts = async (scripts, { waitCondition, waitTimeout } = {}) => {
+  dom.injectScripts = async (scripts) => {
     const scriptLoaders = scripts.map(
       (script) =>
         new Promise((resolve) => {
@@ -223,7 +224,6 @@ const createFakePage = async (
         })
     );
     await Promise.all(scriptLoaders);
-    await waitForCondition(waitCondition, waitTimeout);
   };
 
   // Workaround the issue that jsdom doesn't define these 2 ones
