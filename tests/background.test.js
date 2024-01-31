@@ -69,6 +69,7 @@ test("Auto-populate with an AWS profile used by the user", async () => {
     configuration: { autoPopulateUsedProfiles: true },
   });
   // When
+  await browser.webRequest.onBeforeRequest.waitForListener();
   await browser.webRequest.onBeforeRequest.triggerListener(TEST_PROFILE_LOGIN_REQUEST);
   // Then
   const storageContent = await browser.storage.local.get();

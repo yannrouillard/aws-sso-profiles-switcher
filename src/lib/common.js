@@ -13,27 +13,38 @@ const getNextProfileColor = (index) => {
   return availableProfileColors[index % availableProfileColors.length];
 };
 
-function updateStoredProfile(storedProfiles, newProfile) {
-  const existingProfile = storedProfiles[newProfile.id] || {};
-  // We assign a default color if one doesn't exist yet
-  const color = getNextProfileColor(Object.keys(storedProfiles).length);
-  storedProfiles[newProfile.id] = Object.assign({ color }, existingProfile, newProfile);
-  return storedProfiles[newProfile.id];
-}
-
 async function saveAwsProfile(awsProfile) {
-  const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const profile = updateStoredProfile(storageContent.awsProfiles, awsProfile);
-  await browser.storage.local.set(storageContent);
-  return profile;
+  const awsProfiles = await saveAwsProfiles([awsProfile]);
+  return awsProfiles[awsProfile.id];
 }
 
-async function saveAwsProfiles(awsProfiles) {
-  const currentStorage = await browser.storage.local.get({ awsProfiles: {} });
-  for (const profile of Object.values(awsProfiles).sort()) {
-    await updateStoredProfile(currentStorage.awsProfiles, profile);
-  }
-  await browser.storage.local.set(currentStorage);
+async function saveAwsProfiles(newAwsProfiles) {
+  const { awsProfiles = {} } = await browser.storage.local.get({ awsProfiles: {} });
+
+  newAwsProfiles.sort().forEach((profile) => {
+    const color = getNextProfileColor(Object.keys(awsProfiles).length);
+    awsProfiles[profile.id] = Object.assign({ color }, profile);
+  });
+
+  await browser.storage.local.set({ awsProfiles });
+  return awsProfiles;
+}
+
+async function removeAwsProfilesForPortalDomain(portalDomain) {
+  const { awsProfiles = {} } = await browser.storage.local.get({ awsProfiles: {} });
+
+  const profilesToRemove = Object.values(awsProfiles).filter(
+    (profile) => profile.portalDomain === portalDomain
+  );
+
+  const removedProfiles = {};
+  profilesToRemove.forEach((profile) => {
+    removedProfiles[profile.id] = profile;
+    delete awsProfiles[profile.id];
+  });
+
+  await browser.storage.local.set({ awsProfiles });
+  return removedProfiles;
 }
 
 async function legacyLoadAwsProfiles() {
@@ -72,6 +83,7 @@ const common = {
   loadAwsProfiles,
   saveAwsProfile,
   saveAwsProfiles,
+  removeAwsProfilesForPortalDomain,
 };
 
 exports = common;
