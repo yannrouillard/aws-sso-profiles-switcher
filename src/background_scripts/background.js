@@ -24,19 +24,30 @@ function extractProfileInfoFromRequest(requestDetails) {
   const accountId = url.searchParams.get("account_id");
   const originUrl = new URL(requestDetails.originUrl);
   const portalDomain = originUrl.hostname.split(".")[0];
-  // The hash part loolk like this /saml/custom/<ACCOUND_ID> (<ACCOUNT_NAME>)/<BASE64_STRING>
-  // so we can extract the account name from it
-  const [, accountName] = decodeURIComponent(originUrl.hash.split("/")[3]).match(/\((.*)\)$/);
 
   const profileInfo = {
     portalDomain,
-    accountName,
     accountId,
     name: profileName,
     url: requestDetails.originUrl,
-    title: `${accountName} - ${profileName}`,
-    id: `${portalDomain} - ${accountName} - ${profileName}`,
   };
+
+  if (originUrl.href.includes("/saml/custom")) {
+    // The hash part loolk like this /saml/custom/<ACCOUND_ID> (<ACCOUNT_NAME>)/<BASE64_STRING>
+    // so we can extract the account name from it
+    const [, accountName] = decodeURIComponent(originUrl.hash.split("/")[3]).match(/\((.*)\)$/);
+    profileInfo.accountName = accountName;
+  } else {
+    // The new URL used by the new AWS access portal design don't contain the account name
+    // We fallback on using the account id here.
+    // If the profile has been loaded by the user from the AWS SSO portal, it will be reconciled
+    // at save time and the account name will be updated
+    profileInfo.accountName = accountId;
+  }
+
+  profileInfo.title = `${profileInfo.accountName} - ${profileName}`;
+  profileInfo.id = `${portalDomain} - ${profileInfo.accountName} - ${profileName}`;
+
   return profileInfo;
 }
 

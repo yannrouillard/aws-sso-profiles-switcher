@@ -23,6 +23,25 @@ async function saveAwsProfiles(newAwsProfiles) {
 
   newAwsProfiles.sort().forEach((profile) => {
     const color = getNextProfileColor(Object.keys(awsProfiles).length);
+
+    if (!(profile.id in awsProfiles)) {
+      // Starting with new AWS access portal layout, we might not get the account name
+      // when intercepting account connection URL, it is unfortunate as we would display
+      // the account id instead of the account name in the popup and container name.
+      // To workaround that, we try to find if the profile with same name and account id
+      // has already been saved when loading explicitely profiles from the portal page so
+      // we can retrieve the account name and fix the id and title
+      const isSameProfile = (p) =>
+        p.portalDomain === profile.portalDomain &&
+        p.accountId === profile.accountId &&
+        p.name === profile.name;
+      const sameProfile = Object.values(awsProfiles).find(isSameProfile);
+      if (sameProfile) {
+        profile.id = sameProfile.id;
+        profile.title = sameProfile.title;
+        profile.accountName = sameProfile.accountName;
+      }
+    }
     awsProfiles[profile.id] = Object.assign({ color }, profile);
   });
 

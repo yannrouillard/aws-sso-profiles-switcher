@@ -23,8 +23,8 @@ const PROFILES_INFO_LOADER_SCRIPTS = [
  *******************************************************************************/
 
 const createFakeAwsPortalPage = async (htmlFile, { browserStorage } = {}) => {
-  // by convention, the second element is the domain name
-  const domain = htmlFile.split(".")[1];
+  // by convention, the third element is the domain name
+  const domain = htmlFile.split(".")[2];
 
   const page = await createFakePage(path.join(TEST_FILES_FOLDER, htmlFile), {
     url: `https://${domain}.awsapps.com/start/#`,
@@ -49,7 +49,7 @@ const createFakeAwsPortalPage = async (htmlFile, { browserStorage } = {}) => {
   return page;
 };
 
-const simulateExpandSection = (event) => {
+const simulateExpandSectionLegacy = (event) => {
   const candidates = [event.target.parentElement, event.target.parentElement.parentElement];
 
   const sectionToExpandParent = candidates.find((e) => e.querySelector("sso-expander-hidden"));
@@ -67,84 +67,130 @@ const simulateExpandSection = (event) => {
   sectionToExpandParent.replaceChild(sectionExpanded, sectionToExpand);
 };
 
+const simulateExpandSection = (event) => {
+  const section = event.target;
+  section.setAttribute(
+    "aria-expanded",
+    section.getAttribute("aria-expanded") === "true" ? "false" : "true"
+  );
+};
+
+const setupSectionExpansionEventHandlers = (portalStyle, page) => {
+  const installEventHandlers = (selector, eventHandler) => {
+    page.window.document
+      .querySelectorAll(selector)
+      .forEach((elt) => elt.addEventListener("click", eventHandler));
+  };
+
+  if (portalStyle === "legacy") {
+    installEventHandlers("div.instance-section, div.logo", simulateExpandSectionLegacy);
+  } else {
+    installEventHandlers('button[data-testid="account-list-cell"]', simulateExpandSection);
+  }
+};
 /*******************************************************************************
  * Tests definition
  *******************************************************************************/
 
+const PORTAL_STYLES = ["legacy", "new"];
+
 const testFiles = [
   {
-    htmlFile: "aws_portal.mysso.expanded_sections.html",
+    htmlFile: "aws_portal.legacy.mysso.expanded_sections.html",
     case: "expanded sections",
+    portalStyle: "legacy",
   },
   {
-    htmlFile: "aws_portal.mysso.folded_sections.html",
+    htmlFile: "aws_portal.legacy.mysso.folded_sections.html",
     case: "folded sections",
+    portalStyle: "legacy",
+  },
+  {
+    htmlFile: "aws_portal.new.mysso.expanded_sections.html",
+    case: "expanded sections",
+    portalStyle: "new",
+  },
+  {
+    htmlFile: "aws_portal.new.mysso.folded_sections.html",
+    case: "folded sections",
+    portalStyle: "new",
   },
 ];
 
-test.each(testFiles)("Parse correctly AWS Portal page with $case", async ({ htmlFile }) => {
-  // Given
-  const awsPortalPage = await createFakeAwsPortalPage(htmlFile);
-  const expectedStorage = buildStorageContentForDomains("mysso");
-  const expectedProfilesCount = Object.keys(expectedStorage.awsProfiles).length;
-  // We have to manually simulate section expansion click logic
-  awsPortalPage.window.document
-    .querySelectorAll("div.instance-section, div.logo")
-    .forEach((elt) => elt.addEventListener("click", simulateExpandSection));
-  // When
-  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
-    PROFILES_INFO_LOADER_SCRIPTS,
-    expectedProfilesCount
-  );
-  // Then
-  const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
-  expect(browserStorageContent).toEqual(expectedStorage);
-});
-
-test("Merge profiles from two different AWS Portal pages in storage", async () => {
-  // Given
-  const browserStorage = mockBrowserStorage();
-  const awsPortalPages = await Promise.all(
-    ["mysso", "anothersso"].map((domain) =>
-      createFakeAwsPortalPage(`aws_portal.${domain}.html`, { browserStorage })
-    )
-  );
-  const expectedContent = buildStorageContentForDomains("mysso", "anothersso");
-  const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
-  // When
-  for (const page of awsPortalPages) {
-    await page.injectScriptsAndWaitForStorageUpdate(
+test.each(testFiles)(
+  "Parse correctly AWS Portal page with $case ($portalStyle style)",
+  async ({ htmlFile, portalStyle }) => {
+    // Given
+    const awsPortalPage = await createFakeAwsPortalPage(htmlFile);
+    const expectedStorage = buildStorageContentForDomains(portalStyle, "mysso");
+    const expectedProfilesCount = Object.keys(expectedStorage.awsProfiles).length;
+    // We have to manually simulate section expansion click logic
+    setupSectionExpansionEventHandlers(portalStyle, awsPortalPage);
+    // When
+    await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
       PROFILES_INFO_LOADER_SCRIPTS,
       expectedProfilesCount
     );
+    // Then
+    const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
+    expect(browserStorageContent).toEqual(expectedStorage);
   }
-  // Then
-  const browserStorageContent = await browserStorage.get();
-  expect(browserStorageContent).toEqual(expectedContent);
-});
+);
 
-test("Update profiles fom an existing AWS Portal pages in storage", async () => {
-  // Given
-  const storageContent = buildStorageContentForDomains("mysso");
-  const awsProfiles = storageContent.awsProfiles;
-  // We set one element to be favorite and expect its state to be preserved
-  const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
-  favoriteProfile.favorite = true;
-  const expectedContent = structuredClone(storageContent);
-  const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
+test.each(PORTAL_STYLES)(
+  "Merge profiles from two different AWS Portal pages in storage (%p style)",
+  async (portalStyle) => {
+    // Given
+    const browserStorage = mockBrowserStorage();
+    const awsPortalPages = await Promise.all(
+      ["mysso", "anothersso"].map((domain) =>
+        createFakeAwsPortalPage(`aws_portal.${portalStyle}.${domain}.html`, { browserStorage })
+      )
+    );
+    const expectedContent = buildStorageContentForDomains(portalStyle, "mysso", "anothersso");
+    const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
+    // When
+    for (const page of awsPortalPages) {
+      await page.injectScriptsAndWaitForStorageUpdate(
+        PROFILES_INFO_LOADER_SCRIPTS,
+        expectedProfilesCount
+      );
+    }
+    // Then
+    const browserStorageContent = await browserStorage.get();
+    expect(browserStorageContent).toEqual(expectedContent);
+  }
+);
 
-  // We add a new account not present in the portal and expect to be removed on update
-  awsProfiles.ToBeRemoved = Object.assign({}, Object.values(awsProfiles)[0], { id: "ToBeRemoved" });
+test.each(PORTAL_STYLES)(
+  "Update profiles fom an existing AWS Portal pages in storage (%p style)",
+  async (portalStyle) => {
+    // Given
+    const storageContent = buildStorageContentForDomains(portalStyle, "mysso");
+    const awsProfiles = storageContent.awsProfiles;
+    // We set one element to be favorite and expect its state to be preserved
+    const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
+    favoriteProfile.favorite = true;
+    const expectedContent = structuredClone(storageContent);
+    const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
 
-  const browserStorage = mockBrowserStorage(storageContent);
-  const awsPortalPage = await createFakeAwsPortalPage("aws_portal.mysso.html", { browserStorage });
+    // We add a new account not present in the portal and expect to be removed on update
+    awsProfiles.ToBeRemoved = Object.assign({}, Object.values(awsProfiles)[0], {
+      id: "ToBeRemoved",
+    });
 
-  // When
-  await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
-    PROFILES_INFO_LOADER_SCRIPTS,
-    expectedProfilesCount
-  );
-  // Then
-  const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
-  expect(browserStorageContent).toEqual(expectedContent);
-});
+    const browserStorage = mockBrowserStorage(storageContent);
+    const awsPortalPage = await createFakeAwsPortalPage(`aws_portal.${portalStyle}.mysso.html`, {
+      browserStorage,
+    });
+
+    // When
+    await awsPortalPage.injectScriptsAndWaitForStorageUpdate(
+      PROFILES_INFO_LOADER_SCRIPTS,
+      expectedProfilesCount
+    );
+    // Then
+    const browserStorageContent = await awsPortalPage.window.browser.storage.local.get();
+    expect(browserStorageContent).toEqual(expectedContent);
+  }
+);
