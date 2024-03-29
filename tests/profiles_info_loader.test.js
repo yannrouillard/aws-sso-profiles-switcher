@@ -167,7 +167,6 @@ test.each(PORTAL_STYLES)(
   async (portalStyle) => {
     // Given
     const storageContent = buildStorageContentForDomains(portalStyle, "mysso");
-    const awsProfiles = storageContent.awsProfiles;
     // We set one element to be favorite and expect its state to be preserved
     const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
     favoriteProfile.favorite = true;
@@ -175,9 +174,12 @@ test.each(PORTAL_STYLES)(
     const expectedProfilesCount = Object.keys(expectedContent.awsProfiles).length;
 
     // We add a new account not present in the portal and expect to be removed on update
-    awsProfiles.ToBeRemoved = Object.assign({}, Object.values(awsProfiles)[0], {
-      id: "ToBeRemoved",
-    });
+    storageContent.awsProfiles["mysso - 777777777777 - ToBeRemoved"] = {
+      portalDomain: "mysso",
+      accountId: "777777777777",
+      accountName: "fakeAccount",
+      profileName: "ToBeRemoved",
+    };
 
     const browserStorage = mockBrowserStorage(storageContent);
     const awsPortalPage = await createFakeAwsPortalPage(`aws_portal.${portalStyle}.mysso.html`, {

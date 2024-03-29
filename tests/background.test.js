@@ -41,17 +41,18 @@ const TEST_FEDERATION_LOCATION = "https://eu-west-1.signin.aws.amazon.com/federa
 const TEST_SIGNIN_TOKEN = "TEST_SIGNIN_TOKEN";
 
 const getTestData = (portalStyle) => {
-  const testProfile = Object.values(
-    buildStorageContentForDomains(portalStyle, FAKE_DOMAIN).awsProfiles
-  )[0];
+  const storageContent = buildStorageContentForDomains(portalStyle, FAKE_DOMAIN);
+  const testProfile = Object.values(storageContent.awsProfiles)[0];
   if (portalStyle === "new") {
-    testProfile.title = `${testProfile.accountId} - ${testProfile.name}`;
-    testProfile.id = `${testProfile.portalDomain} - ${testProfile.accountId} - ${testProfile.name}`;
-    testProfile.accountName = testProfile.accountId;
+    testProfile.accountName = undefined;
   }
 
   return {
     profile: testProfile,
+    profileId: `${testProfile.portalDomain} - ${testProfile.accountId} - ${testProfile.profileName}`,
+    profileTitle: `${testProfile.accountName || testProfile.accountId} - ${
+      testProfile.profileName
+    }`,
     signinUrl:
       `${TEST_FEDERATION_LOCATION}?` +
       new URLSearchParams({
@@ -62,7 +63,7 @@ const getTestData = (portalStyle) => {
       }).toString(),
 
     loginRequest: {
-      url: `https://portal.sso.eu-west-1.amazonaws.com/federation/console?account_id=${testProfile.accountId}&role_name=${testProfile.name}`,
+      url: `https://portal.sso.eu-west-1.amazonaws.com/federation/console?account_id=${testProfile.accountId}&role_name=${testProfile.profileName}`,
       originUrl: testProfile.url,
       method: "GET",
     },
@@ -90,7 +91,7 @@ test.each(PORTAL_STYLES)(
     await browser.webRequest.onBeforeRequest.triggerListener(testData.loginRequest);
     // Then
     const storageContent = await browser.storage.local.get();
-    expect(storageContent.awsProfiles).toEqual({ [testData.profile.id]: testData.profile });
+    expect(storageContent.awsProfiles).toEqual({ [testData.profileId]: testData.profile });
   }
 );
 
@@ -124,7 +125,7 @@ test.each(PORTAL_STYLES)(
       configuration: { autoPopulateUsedProfiles: true, openProfileInDedicatedContainer: true },
     });
     // When
-    for (const name of ["fakeContainer1", testData.profile.title, "fakeContainer3"]) {
+    for (const name of ["fakeContainer1", testData.profileTitle, "fakeContainer3"]) {
       await browser.contextualIdentities.create({ name });
     }
     await browser.webRequest.onBeforeRequest.triggerListener(testData.loginRequest);

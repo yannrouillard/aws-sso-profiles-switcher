@@ -57,11 +57,9 @@ function extractAwsProfilesFromAccountSectionLegacy(section) {
   const accountId = section.querySelector("span.accountId").textContent.trim().replace("#", "");
   const portalDomain = findAwsPortalDomain();
   const awsProfiles = findAwsProfileLinksLegacy(section).map((link) => {
-    const name = link.getAttribute("title");
+    const profileName = link.getAttribute("title");
     const url = link.getAttribute("href");
-    const title = `${accountName} - ${name}`;
-    const id = `${portalDomain} - ${title}`;
-    return { portalDomain, accountName, accountId, name, url, title, id };
+    return new AwsProfile({ portalDomain, accountName, accountId, profileName, url });
   });
   return awsProfiles;
 }
@@ -117,12 +115,13 @@ function extractAwsProfilesFromAccountSection(section) {
     // The url parameters are not real query parameters as they are after the #
     // but we can still use URLSearchParams to parse them
     const profileUrlParams = new URLSearchParams(profileUrl.href.split("?")[1]);
-    const name = profileUrlParams.get("role_name");
-    const accountId = profileUrlParams.get("account_id");
-    const url = profileUrl.href;
-    const title = `${accountName} - ${name}`;
-    const id = `${portalDomain} - ${title}`;
-    return { portalDomain, accountName, accountId, name, url, title, id };
+    return new AwsProfile({
+      portalDomain,
+      accountName,
+      accountId: profileUrlParams.get("account_id"),
+      profileName: profileUrlParams.get("role_name"),
+      url: profileUrl.href,
+    });
   });
   return awsProfiles;
 }
@@ -155,8 +154,8 @@ const portalParsers = {
 
 (async () => {
   const profilesRemoved = await removeAwsProfilesForPortalDomain(findAwsPortalDomain());
-  const mergeWithPreviousProfileToKeepSettings = (profile) =>
-    Object.assign({}, profilesRemoved[profile.id] || {}, profile);
+  const mergeWithPreviousProfileToKeepSettings = (p) =>
+    p.mergeWithSavedProfile(profilesRemoved[p.id]);
 
   const portalStyle = findPortalStyle(document);
   const portalParser = portalParsers[portalStyle];
