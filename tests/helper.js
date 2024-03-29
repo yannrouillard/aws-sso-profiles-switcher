@@ -57,45 +57,42 @@ const buildStorageContentForDomains = (portalStyle, ...domains) => {
         accountName: "Development",
         accountId: testAccountInfos["Development"].accountId,
         color: colors[4 * index],
-        name: "AdministratorAccess",
+        profileName: "AdministratorAccess",
         portalDomain: domain,
-        title: "Development - AdministratorAccess",
         url: buildProfileUrl(portalStyle, domain, "Development", "AdministratorAccess"),
-        id: `${domain} - Development - AdministratorAccess`,
+        favorite: false,
       },
       {
         accountName: "Root",
         accountId: testAccountInfos["Root"].accountId,
         color: colors[4 * index + 2],
-        name: "AdministratorAccess",
+        profileName: "AdministratorAccess",
         portalDomain: domain,
-        title: "Root - AdministratorAccess",
         url: buildProfileUrl(portalStyle, domain, "Root", "AdministratorAccess"),
-        id: `${domain} - Root - AdministratorAccess`,
+        favorite: false,
       },
       {
         accountName: "Root",
         accountId: testAccountInfos["Root"].accountId,
         color: colors[4 * index + 3],
-        name: "ReadOnlyAccess",
+        profileName: "ReadOnlyAccess",
         portalDomain: domain,
-        title: "Root - ReadOnlyAccess",
         url: buildProfileUrl(portalStyle, domain, "Root", "ReadOnlyAccess"),
-        id: `${domain} - Root - ReadOnlyAccess`,
+        favorite: false,
       },
       {
         accountName: "Production",
         accountId: testAccountInfos["Production"].accountId,
         color: colors[4 * index + 1],
-        name: "AdministratorAccess",
+        profileName: "AdministratorAccess",
         portalDomain: domain,
-        title: "Production - AdministratorAccess",
         url: buildProfileUrl(portalStyle, domain, "Production", "AdministratorAccess"),
-        id: `${domain} - Production - AdministratorAccess`,
+        favorite: false,
       },
     ];
     profiles.forEach((profile) => {
-      storageContent.awsProfiles[profile.id] = profile;
+      const profileId = `${profile.portalDomain} - ${profile.accountId} - ${profile.profileName}`;
+      storageContent.awsProfiles[profileId] = profile;
     });
   });
 

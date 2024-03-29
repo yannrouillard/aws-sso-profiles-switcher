@@ -9,6 +9,44 @@ const availableProfileColors = [
   "purple",
 ];
 
+class AwsProfile {
+  constructor({ portalDomain, accountId, accountName, profileName, url, color, favorite }) {
+    this.portalDomain = portalDomain;
+    this.accountId = accountId;
+    this.accountName = accountName;
+    this.profileName = profileName;
+    this.url = url;
+    this.favorite = favorite;
+    this.color = color;
+  }
+
+  get title() {
+    return `${this.accountName || this.accountId} - ${this.profileName}`;
+  }
+
+  get id() {
+    return `${this.portalDomain} - ${this.accountId} - ${this.profileName}`;
+  }
+
+  get legacyId() {
+    return `${this.portalDomain} - ${this.accountName} - ${this.profileName}`;
+  }
+
+  mergeWithSavedProfile(profile) {
+    // the current profile value usually has priority except if the values
+    // are undefined in which case we keep the stored value
+    // This is useful to keep the color and favorite status of the profile
+    Object.entries(profile || {}).forEach(([key, value]) => {
+      this[key] = this[key] ?? value;
+    });
+    return this;
+  }
+
+  static fromStorage(profile) {
+    return new AwsProfile(profile);
+  }
+}
+
 const getNextProfileColor = (index) => {
   return availableProfileColors[index % availableProfileColors.length];
 };
@@ -22,27 +60,16 @@ async function saveAwsProfiles(newAwsProfiles) {
   const { awsProfiles = {} } = await browser.storage.local.get({ awsProfiles: {} });
 
   newAwsProfiles.sort().forEach((profile) => {
-    const color = getNextProfileColor(Object.keys(awsProfiles).length);
-
-    if (!(profile.id in awsProfiles)) {
-      // Starting with new AWS access portal layout, we might not get the account name
-      // when intercepting account connection URL, it is unfortunate as we would display
-      // the account id instead of the account name in the popup and container name.
-      // To workaround that, we try to find if the profile with same name and account id
-      // has already been saved when loading explicitely profiles from the portal page so
-      // we can retrieve the account name and fix the id and title
-      const isSameProfile = (p) =>
-        p.portalDomain === profile.portalDomain &&
-        p.accountId === profile.accountId &&
-        p.name === profile.name;
-      const sameProfile = Object.values(awsProfiles).find(isSameProfile);
-      if (sameProfile) {
-        profile.id = sameProfile.id;
-        profile.title = sameProfile.title;
-        profile.accountName = sameProfile.accountName;
-      }
+    // If the profile was saved with the legacy id, we take the opportunity to remove it
+    const legacySavedProfile = awsProfiles[profile.legacyId];
+    if (legacySavedProfile) {
+      delete awsProfiles[profile.legacyId];
     }
-    awsProfiles[profile.id] = Object.assign({ color }, profile);
+    const savedProfile = awsProfiles[profile.id] || legacySavedProfile;
+    profile.mergeWithSavedProfile(savedProfile);
+    profile.color = profile.color ?? getNextProfileColor(Object.keys(awsProfiles).length);
+    profile.favorite = profile.favorite ?? false;
+    awsProfiles[profile.id] = profile;
   });
 
   await browser.storage.local.set({ awsProfiles });
@@ -52,9 +79,9 @@ async function saveAwsProfiles(newAwsProfiles) {
 async function removeAwsProfilesForPortalDomain(portalDomain) {
   const { awsProfiles = {} } = await browser.storage.local.get({ awsProfiles: {} });
 
-  const profilesToRemove = Object.values(awsProfiles).filter(
-    (profile) => profile.portalDomain === portalDomain
-  );
+  const profilesToRemove = Object.values(awsProfiles)
+    .map(AwsProfile.fromStorage)
+    .filter((profile) => profile.portalDomain === portalDomain);
 
   const removedProfiles = {};
   profilesToRemove.forEach((profile) => {
@@ -74,12 +101,7 @@ async function legacyLoadAwsProfiles() {
     .flat()
     .map((awsProfilesByAccount) => Object.values(awsProfilesByAccount.awsProfilesByName))
     .flat()
-    .map((profile, index) =>
-      Object.assign(profile, {
-        id: `${profile.portalDomain} - ${profile.title}`,
-        color: getNextProfileColor(index),
-      })
-    );
+    .map((profile, index) => Object.assign(profile, { color: getNextProfileColor(index) }));
 
   return awsProfiles;
 }
@@ -91,14 +113,14 @@ async function loadAwsProfiles() {
     await browser.storage.local.remove("awsProfilesByDomain");
   }
   const storageContent = await browser.storage.local.get({ awsProfiles: {} });
-  const awsProfiles = Object.values(storageContent.awsProfiles).sort((a, b) =>
-    a.title.localeCompare(b.title)
-  );
-  return awsProfiles;
+  return Object.values(storageContent.awsProfiles)
+    .map(AwsProfile.fromStorage)
+    .sort((a, b) => a.title.localeCompare(b.title));
 }
 
 // eslint-disable-next-line no-unused-vars
 const common = {
+  AwsProfile,
   loadAwsProfiles,
   saveAwsProfile,
   saveAwsProfiles,

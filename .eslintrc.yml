@@ -11,6 +11,7 @@ globals:
   browser: true
   __dirname: true
   # Common
+  AwsProfile: true
   loadAwsProfiles: true
   saveAwsProfile: true
   saveAwsProfiles: true

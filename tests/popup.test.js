@@ -53,7 +53,7 @@ test.each(PORTAL_STYLES)("Load and display roles from storage (%p style)", async
     "Root - AdministratorAccess",
     "Root - ReadOnlyAccess",
   ]);
-  expect(favoriteProfileDiv.textContent).toEqual(favoriteProfile.title);
+  expect(favoriteProfileDiv.textContent).toEqual("Root - AdministratorAccess");
 });
 
 test("Display instructions when no profiles exist", async () => {
