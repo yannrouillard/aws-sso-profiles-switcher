@@ -48,9 +48,9 @@ test.each(PORTAL_STYLES)("Load and display roles from storage (%p style)", async
   const favoriteProfileDiv = popupPage.window.document.querySelector("div.profile-favorite");
 
   expect(profilesDisplayed).toEqual([
+    "Root - AdministratorAccess",
     "Development - AdministratorAccess",
     "Production - AdministratorAccess",
-    "Root - AdministratorAccess",
     "Root - ReadOnlyAccess",
   ]);
   expect(favoriteProfileDiv.textContent).toEqual("Root - AdministratorAccess");

@@ -40,12 +40,48 @@ async function getActiveTab() {
   return tabs[0];
 }
 
+async function loadProfile(profile) {
+  const cookieStoreId = (await browser.storage.local.get("defaultContainer")).defaultContainer;
+  const activeTab = await getActiveTab();
+  await browser.tabs.create({ url: profile.url, cookieStoreId, index: activeTab.index + 1 });
+  await window.close();
+}
+
+function sortProfilesFavoritesFirst(a, b) {
+  if (a.favorite && !b.favorite) return -1;
+  if (!a.favorite && b.favorite) return 1;
+  return a.title.localeCompare(b.title);
+}
+
+function isSelectedProfile(profile) {
+  return profile.id === selectedProfileId;
+}
+
+async function getSelectedProfile() {
+  const currentProfiles = await loadAwsProfiles();
+  return currentProfiles.find(isSelectedProfile);
+}
+
+function moveSelectedProfile(direction) {
+  if (selectedProfileId === null) return;
+
+  const visibleEntries = Array.from(document.querySelectorAll("div.profile-item"));
+  const currentIndex = visibleEntries.findIndex(
+    (entry) => entry.getAttribute("data-id") === selectedProfileId
+  );
+  const newIndex = (currentIndex + direction + visibleEntries.length) % visibleEntries.length;
+  const selectedEntry = visibleEntries[newIndex];
+  selectedProfileId = selectedEntry.getAttribute("data-id");
+
+  visibleEntries.forEach((entry, index) => {
+    entry.classList.toggle("profile-item-selected", index === newIndex);
+  });
+  selectedEntry.scrollIntoView({ block: "nearest" });
+}
+
 function createProfileClickHandler(profile) {
   return async () => {
-    const cookieStoreId = (await browser.storage.local.get("defaultContainer")).defaultContainer;
-    const activeTab = await getActiveTab();
-    await browser.tabs.create({ url: profile.url, cookieStoreId, index: activeTab.index + 1 });
-    await window.close();
+    await loadProfile(profile);
   };
 }
 
@@ -69,8 +105,12 @@ function createElement(tagName, { classes = [], attributes = {}, text }) {
 }
 
 function createTableEntryFromAwsProfile(awsProfile) {
-  const entry = createElement("div", { classes: ["profile-item"] });
+  const entry = createElement("div", {
+    classes: ["profile-item"],
+    attributes: { "data-id": awsProfile.id },
+  });
   if (awsProfile.favorite) entry.classList.add("profile-favorite");
+  if (isSelectedProfile(awsProfile)) entry.classList.add("profile-item-selected");
   const dotStyle = `background-color: ${getHtmlColorCode(awsProfile.color)}`;
   entry.append(
     createElement("div", { classes: ["profile-dot"], attributes: { style: dotStyle } }),
@@ -89,12 +129,14 @@ async function loadProfilesFromPortalPage() {
   await browser.tabs.executeScript({ file: "/content_scripts/profiles_info_loader.js" });
 }
 
-function handleSearchKeyEvent(event) {
+async function handleSearchKeyEvent(event) {
   if (event.key === "Enter") {
-    const awsProfilesDiv = document.querySelector("div#profiles-list");
-    if (awsProfilesDiv.firstChild) {
-      awsProfilesDiv.firstChild.click();
-    }
+    const selectedProfile = await getSelectedProfile();
+    if (selectedProfile) await loadProfile(selectedProfile);
+  } else if (event.key === "ArrowUp") {
+    moveSelectedProfile(-1);
+  } else if (event.key === "ArrowDown") {
+    moveSelectedProfile(1);
   }
 }
 
@@ -112,12 +154,20 @@ async function refreshPopupDisplay() {
 
   if (hasProfiles) {
     const searchTerms = document.querySelector("input").value.split(/\s+/);
-    const awsProfileEntries = currentProfiles
+    const visibleProfiles = currentProfiles
       .filter(createSearchTermsMatcher(searchTerms))
-      .map(createTableEntryFromAwsProfile);
+      .sort(sortProfilesFavoritesFirst);
 
-    const awsProfilesDiv = document.querySelector("div#profiles-list");
-    awsProfilesDiv.replaceChildren(...awsProfileEntries);
+    if (visibleProfiles.length === 0) {
+      selectedProfileId = null;
+    } else if (!visibleProfiles.find(isSelectedProfile)) {
+      // selected profile not visible anymore or undefined, we just select the first one
+      selectedProfileId = visibleProfiles[0].id;
+    }
+
+    const awsProfilesListDiv = document.querySelector("div#profiles-list");
+    const visibleProfileEntries = visibleProfiles.map(createTableEntryFromAwsProfile);
+    awsProfilesListDiv.replaceChildren(...visibleProfileEntries);
   }
 
   setPopupSectionVisibility("aws-access-portal", isOnAwsPortal);
@@ -127,7 +177,7 @@ async function refreshPopupDisplay() {
 
 function installEventHandlers() {
   document.querySelector("input#searchbox").addEventListener("input", refreshPopupDisplay);
-  document.querySelector("input#searchbox").addEventListener("keyup", handleSearchKeyEvent);
+  document.addEventListener("keydown", handleSearchKeyEvent);
   document.querySelector("div#load-profiles").addEventListener("click", loadProfilesFromPortalPage);
   document.querySelector("#preferences-icon").addEventListener("click", async () => {
     await browser.runtime.openOptionsPage();
@@ -138,6 +188,8 @@ function installEventHandlers() {
 /*******************************************************************************
  * Main code
  *******************************************************************************/
+
+let selectedProfileId = null;
 
 setPopupColorTheme(getColorThemePreference());
 
