@@ -11,6 +11,8 @@ const {
  * Constants
  *******************************************************************************/
 
+const PORTAL_STYLES = ["legacy", "new"];
+
 const SRC_FOLDER = path.join(__dirname, "..", "src");
 const POPUP_HTML_FILE = path.join(SRC_FOLDER, "popup", "popup.html");
 
@@ -28,9 +30,9 @@ const searchboxFocused = (page) => async () => {
  * Tests definition
  *******************************************************************************/
 
-test("Load and display roles from storage", async () => {
+test.each(PORTAL_STYLES)("Load and display roles from storage (%p style)", async (portalStyle) => {
   // Given
-  const storageContent = buildStorageContentForDomains("mysso");
+  const storageContent = buildStorageContentForDomains(portalStyle, "mysso");
   const favoriteProfile = Object.values(storageContent.awsProfiles)[1];
   favoriteProfile.favorite = true;
   const browserStorage = mockBrowserStorage(storageContent);

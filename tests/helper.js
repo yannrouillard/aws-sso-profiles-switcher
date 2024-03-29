@@ -16,49 +16,81 @@ const waitForCondition = async (condition, timeout = 1000) => {
   }
 };
 
-const buildStorageContentForDomains = (...domains) => {
+const testAccountInfos = {
+  Development: {
+    accountId: "987654321098",
+    profileHashes: {
+      AdministratorAccess: "OTg3NjU0MzIxMDk4X2lucy1hMTIzYmM0NWU2NzhkOTAxX3AtMjNhNGI1YzY3ODlkMGUxZg",
+    },
+  },
+  Production: {
+    accountId: "123456789012",
+    profileHashes: {
+      AdministratorAccess: "MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ",
+    },
+  },
+  Root: {
+    accountId: "234567890123",
+    profileHashes: {
+      AdministratorAccess: "MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtMTAyOWEzYjQ4NTBjNmQ3ZQ",
+      ReadOnlyAccess: "MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA",
+    },
+  },
+};
+
+const buildProfileUrl = (portalStyle, domain, accountName, profileName) => {
+  const accountId = testAccountInfos[accountName].accountId;
+  const profileHash = testAccountInfos[accountName].profileHashes[profileName];
+  if (portalStyle == "legacy") {
+    return `https://${domain}.awsapps.com/start/#/saml/custom/${accountId}%20%28${accountName}%29/${profileHash}%3D%3D`;
+  } else {
+    return `https://${domain}.awsapps.com/start/#/console?account_id=${accountId}&role_name=${profileName}`;
+  }
+};
+
+const buildStorageContentForDomains = (portalStyle, ...domains) => {
   const colors = ["blue", "turquoise", "green", "yellow", "orange", "red", "pink", "purple"];
   const storageContent = { awsProfiles: {} };
   domains.forEach((domain, index) => {
     const profiles = [
       {
         accountName: "Development",
-        accountId: "987654321098",
+        accountId: testAccountInfos["Development"].accountId,
         color: colors[4 * index],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Development - AdministratorAccess",
-        url: `https://${domain}.awsapps.com/start/#/saml/custom/987654321098%20%28Development%29/OTg3NjU0MzIxMDk4X2lucy1hMTIzYmM0NWU2NzhkOTAxX3AtMjNhNGI1YzY3ODlkMGUxZg%3D%3D`,
+        url: buildProfileUrl(portalStyle, domain, "Development", "AdministratorAccess"),
         id: `${domain} - Development - AdministratorAccess`,
       },
       {
         accountName: "Root",
-        accountId: "234567890123",
+        accountId: testAccountInfos["Root"].accountId,
         color: colors[4 * index + 2],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Root - AdministratorAccess",
-        url: `https://${domain}.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtMTAyOWEzYjQ4NTBjNmQ3ZQ%3D%3D`,
+        url: buildProfileUrl(portalStyle, domain, "Root", "AdministratorAccess"),
         id: `${domain} - Root - AdministratorAccess`,
       },
       {
         accountName: "Root",
-        accountId: "234567890123",
+        accountId: testAccountInfos["Root"].accountId,
         color: colors[4 * index + 3],
         name: "ReadOnlyAccess",
         portalDomain: domain,
         title: "Root - ReadOnlyAccess",
-        url: `https://${domain}.awsapps.com/start/#/saml/custom/234567890123%20%28Root%29/MjM0NTY3ODkwMTIzX2lucy1kMTM1YWM1N2UyNDZiODAzX3AtNWExYjJjM2Q0ZTVmNmc3aA%3D%3D`,
+        url: buildProfileUrl(portalStyle, domain, "Root", "ReadOnlyAccess"),
         id: `${domain} - Root - ReadOnlyAccess`,
       },
       {
         accountName: "Production",
-        accountId: "123456789012",
+        accountId: testAccountInfos["Production"].accountId,
         color: colors[4 * index + 1],
         name: "AdministratorAccess",
         portalDomain: domain,
         title: "Production - AdministratorAccess",
-        url: `https://${domain}.awsapps.com/start/#/saml/custom/123456789012%20%28Production%29/MTIzNDU2Nzg5MDEyX2lucy1jMjQ2ZGY4OWUwMTJhYjM1X3AtOTg3NmEyYjM5NDBjNWQ2ZQ%3D%3D`,
+        url: buildProfileUrl(portalStyle, domain, "Production", "AdministratorAccess"),
         id: `${domain} - Production - AdministratorAccess`,
       },
     ];
