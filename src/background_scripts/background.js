@@ -8,7 +8,14 @@ const encoder = new TextEncoder();
 async function getOrCreateContainerForProfile(profile) {
   const availableContainers = await browser.contextualIdentities.query({ name: profile.title });
   if (availableContainers.length >= 1) {
-    return availableContainers[0];
+    let container = availableContainers[0];
+    // We fix the container color on the way if it has been changed so it matches the profile
+    if (profile.color && container.color !== profile.color) {
+      container = await browser.contextualIdentities.update(container.cookieStoreId, {
+        color: profile.color,
+      });
+    }
+    return container;
   } else {
     return browser.contextualIdentities.create({
       name: profile.title,

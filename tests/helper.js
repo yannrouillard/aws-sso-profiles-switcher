@@ -115,14 +115,20 @@ const createFakeBrowser = (browserStorage, tabUrl) => {
 
   return {
     contextualIdentities: {
-      query: (queryFilter) => containers.filter((c) => !queryFilter || c.name == queryFilter.name),
-      create: (containerSpec) => {
+      query: async (queryFilter) =>
+        containers.filter((c) => !queryFilter || c.name == queryFilter.name),
+      create: async (containerSpec) => {
         const newContainer = Object.assign(
           { cookieStoreId: `firefox-container-${containers.length + 1}` },
           containerSpec
         );
         containers.push(newContainer);
         return newContainer;
+      },
+      update: async (cookieStoreId, containerSpec) => {
+        const container = containers.find((c) => c.cookieStoreId == cookieStoreId);
+        Object.assign(container, containerSpec);
+        return container;
       },
     },
     permissions: {
