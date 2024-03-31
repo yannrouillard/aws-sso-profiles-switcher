@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "AWS SSO Profiles Switcher",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "description": "Easily switch between roles available in the AWS Single-Sign-On Portal",
     "icons": {
         "48": "icons/aws-sso-switcher-48.png",
